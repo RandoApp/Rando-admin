@@ -1,13 +1,19 @@
 var logger = require("../src/log/logger");
 var adminModel = require("./model/adminModel");
 var userModel = require("../src/model/userModel");
+var express = require("express");
+var fs = require("fs");
+var config = require("config");
 
 module.exports = {
     init: function (app) {
         var self = this;
+        app.use("/static", express.static(__dirname + '/static'));
+
         app.get('/admin', function (req, res) {
-            res.send('<!DOCTYPE html> <html> <head> <meta http-equiv="content-type" content="text/html; charset=utf-8" /> <title>Rando-admin</title> </head> <body>admin</body> </html>');
+            res.sendfile("admin/static/index.html");
         });
+
         app.get('/fetch/:token', function (req, res) {
             self.forAdmin(req.token, function (err) {
                 if (err) {
@@ -18,8 +24,8 @@ module.exports = {
 
                 userModel.getByEmail(req.query.email, function (err, user) {
                     if (err) {
-                        err.status(500);
-                        err.send(err);
+                        res.status(500);
+                        res.send(err);
                         return;
                     }
                     res.send(user);
