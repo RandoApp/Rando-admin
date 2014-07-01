@@ -32,7 +32,9 @@ module.exports = {
                 });
             });
         });
-        app.get('/users/:token', function (req, res) {
+        app.get('/admin/users', function (req, res) {
+            var token = req.query.token;
+
 /*            self.forAdmin(req.token, function (err) {
                 if (err) {
                     res.status(403);
@@ -41,13 +43,21 @@ module.exports = {
                 }
                 */
 
+                var page = req.query.page;
+                var count = req.query.count;
+
                 userModel.getEmailsAndRandosNumberArray(function (err, emails) {
                     if (err) {
                         err.status(500);
                         err.send(err);
                         return;
                     }
-                    res.send(JSON.stringify(emails));
+                    var usersPage = {
+                        data: emails.slice((page - 1) * count, page * count),
+                        total: emails.length
+                    };
+
+                    res.send(usersPage);
                 });
            // });
         });

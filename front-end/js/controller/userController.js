@@ -1,16 +1,8 @@
-var userController = angular.module("userController", []);
+var userController = angular.module("userController", ['ngResource']);
 
-userController.controller("UserController", ['$scope', '$http', function ($scope, $http) {
+userController.controller("UserController", function($scope, $http, $routeParams) {
     var token = "abcd";
-    $http.get('/users/' + token).success(function (data) {
-        $scope.users = data;
+    $http.get('/admin/user?email=' + $routeParams.email + '&token=' + token).success(function (user) {
+        $scope.user = user;
     });
-    
-    /*
-    $scope.users = [
-        {email: "dimhold@gmail.com", randos: 4},
-        {email: "dima@gmail.com", randos: 0},
-        {email: "peta@gmail.com", randos: 144}
-    ];
-    */
-}]);
+});
