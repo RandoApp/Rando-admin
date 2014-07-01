@@ -32,6 +32,18 @@ module.exports = {
                 });
             });
         });
+        app.get('/admin/user', function (req, res) {
+            var token = req.query.token;
+            var email = req.query.email;
+            userModel.getByEmail(email, function (err, user) {
+                if (err) {
+                    err.status(500);
+                    err.send(err);
+                    return;
+                }
+                res.send(user);
+            });
+        });
         app.get('/admin/users', function (req, res) {
             var token = req.query.token;
 
