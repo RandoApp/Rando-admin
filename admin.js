@@ -1,6 +1,7 @@
 var logger = require("../src/log/logger");
 var adminModel = require("./model/adminModel");
 var userModel = require("../src/model/userModel");
+var randoModel = require("../src/model/randoModel");
 var express = require("express");
 var fs = require("fs");
 var config = require("config");
@@ -13,26 +14,20 @@ module.exports = {
         app.get('/admin', function (req, res) {
             res.sendfile("admin/front-end/index.html");
         });
-
-        app.get('/fetch/:token', function (req, res) {
-            self.forAdmin(req.token, function (err) {
+        app.get('/admin/randos', function (req, res) {
+            var token = req.query.token;
+            //TODO: forAdmin
+            randoModel.getAll(function (err, randos) {
                 if (err) {
                     err.status(500);
                     err.send(err);
                     return;
                 }
-
-                userModel.getByEmail(req.query.email, function (err, user) {
-                    if (err) {
-                        res.status(500);
-                        res.send(err);
-                        return;
-                    }
-                    res.send(user);
-                });
+                res.send(randos);
             });
         });
         app.get('/admin/user', function (req, res) {
+            //TODO: forAdmin
             var token = req.query.token;
             var email = req.query.email;
             userModel.getByEmail(email, function (err, user) {
