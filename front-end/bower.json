@@ -17,6 +17,7 @@
       "angular": "*",
       "angular-route": "*",
       "angular-resource": "*",
-      "ng-table": "*"
+      "ng-table": "*",
+      "moment": "*"
   }
 }

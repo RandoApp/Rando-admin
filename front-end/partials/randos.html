@@ -1,1 +1,13 @@
-<h2 class="sub-header">Randos</h2>
+<h2 class="sub-header">{{ randos.length }} Randos</h2>
+
+<div data-ng-repeat="rando in randos">
+    <div class="rando">
+      <div class="info">
+            <h3 class="user"><a href="#/user/{{ rando.email }}">{{ rando.email }}</a></h3>
+            <div class="datetime">{{ rando.creationPritty }}</div>
+            <div class="randoId not-important">id: {{ rando.randoId }}</div>
+            <div class="location not-important">lat: {{ rando.location.latitude}} long: {{ rando.location.longitude }}</div>
+        </div>
+        <img src="{{ rando.imageSizeURL.small }}" data-ng-click="flipRando(rando, $event)"/>
+    </div>
+</div>
