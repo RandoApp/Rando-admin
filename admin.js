@@ -5,6 +5,10 @@ var randoModel = require("../src/model/randoModel");
 var express = require("express");
 var fs = require("fs");
 var config = require("config");
+var os = require("os");
+var util = require("util");
+var diskspace = require("diskspace");
+var async = require("async");
 
 module.exports = {
     init: function (app) {
@@ -35,8 +39,89 @@ module.exports = {
                     err.status(500);
                     err.send(err);
                     return;
+hj
                 }
                 res.send(user);
+            });
+        });
+        app.get('/admin/status', function (req, res) {
+            //TODO: forAdmin
+            async.parallel([
+                function(callback) {
+                    var nodeMemory = process.memoryUsage();
+                    var status = {
+                        ip: [],
+                        memory: {
+                            total: os.totalmem(),
+                            free: os.freemem(),
+                            heap: nodeMemory.heapTotal,
+                            heapUsed: nodeMemory.heapUsed,
+                            swap: nodeMemory.rss
+                        },
+                        cpu: {
+                            loadAvg: os.loadavg(),
+                            uptime: os.uptime(),
+                            nodeUptime: process.uptime()
+                        }
+                    };
+                    var networkInterfaces = os.networkInterfaces().eth0;
+                    if (networkInterfaces) {
+                        for (var i = 0; i < networkInterfaces.length; i++) {
+                            status.ip.push(networkInterfaces[i].address);
+                        }
+                    }
+                    callback(null, status);
+                },
+                function (callback) {
+                    diskspace.check('/', function (total, free, status) {
+                        var diskStatus = {
+                            disk: {
+                                free: free,
+                                total: total
+                            }
+                        };
+                        callback(null, diskStatus);
+                    });
+                },
+                function () {
+                    //Get status from db
+                    userModel.getEmailsAndRandosNumberArray(err, users) {
+                        async.reduce({
+                            //total users
+                            //total randos
+                            //anonymous users
+                            //users with 0 randos
+                            //users with 0-5 randos
+                            //users with 5-10 randos
+                            //users with 10-30 randos
+                            //users with 30-100 randos
+                            //users with > 100 randos
+
+                            //users by last usage
+
+                            //reported/deleted randos
+                            //banned users
+                            //randos
+
+                            //time between each rando
+                        });
+                    }
+
+                }
+            ],
+            function(err, statuses) {
+                if (err) {
+                    err.status(500);
+                    err.send(err);
+                    return;
+                }
+                var status = {};
+                for (var i = 0; i < statuses.length; i++) {
+                    for (var attr in statuses[i]) {
+                        status[attr] = statuses[i][attr];
+                    }
+                }
+                res.send(status);
             });
         });
         app.get('/admin/users', function (req, res) {
