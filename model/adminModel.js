@@ -5,7 +5,8 @@ var logger = require("../../src/log/logger");
 var Admin = mongoose.model("admin", new mongoose.Schema({
     email: {type: String, unique: true, lowercase: true},
     authToken: String,
-    password: String,
+    expiration: Number,
+    password: String
 }));
 
 module.exports = {
@@ -32,7 +33,7 @@ module.exports = {
 
 	logger.data("[adminModel.create] Create admin with email: ", admin.email);
 
-	var admin = new Admin(user);
+	var admin = new Admin(admin);
 	admin.save(function (err) {
             if (err) {
                 logger.warn("[adminModel.create] Can't create admin! Email: ", admin.email, " because: ", err);

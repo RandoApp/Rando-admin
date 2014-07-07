@@ -9,6 +9,10 @@ var randoApp = angular.module("randoApp", [
 randoApp.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider
+            .when('/auth', {
+                templateUrl: '/admin/partials/auth.html',
+                controller: 'AuthController'
+            })
             .when('/randos', {
                 templateUrl: '/admin/partials/randos.html',
                 controller: 'RandosController'
@@ -21,5 +25,5 @@ randoApp.config(['$routeProvider',
                 templateUrl: '/admin/partials/users.html',
                 controller: 'UsersController'
             })
-            .otherwise({redirectTo: '/bla'});
+            .otherwise({redirectTo: '/'});
 }]);

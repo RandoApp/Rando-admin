@@ -1,4 +1,3 @@
-var logger = require("../src/log/logger");
 var adminModel = require("./model/adminModel");
 var userModel = require("../src/model/userModel");
 var randoModel = require("../src/model/randoModel");
@@ -9,14 +8,47 @@ var os = require("os");
 var util = require("util");
 var diskspace = require("diskspace");
 var async = require("async");
+var crypto = require("crypto");
 
 module.exports = {
+
     init: function (app) {
         var self = this;
         app.use("/admin", express.static(__dirname + '/front-end'));
 
+        app.post('/admin/auth', function (req, res) {
+            var email = req.body.email;
+            var password = req.body.password;
+            var passwordHash = self.generateHashForPassword(email, password);
+            adminModel.getByEmail(email, function (err, admin) {
+                console.log(JSON.stringify(admin));
+                if (err || !admin ||  admin.password != passwordHash) {
+                    res.status(403);
+                    res.send("Forbidden");
+                    return;
+                }
+
+                admin.expiration = Date.now() + 8 * 60 * 60 * 1000;
+                admin.authToken = crypto.randomBytes(config.app.tokenLength).toString('hex');
+                userModel.update(admin);
+                res.send({authToken: admin.authToken});
+            });
+        });
         app.get('/admin', function (req, res) {
-            res.sendfile("admin/front-end/index.html");
+            var token = req.query.token;
+            if (token) {
+                self.forAdmin(req.token, function (err, admin) {
+                    if (admin.expiration < Date.now() || token != admin.authToken) {
+                        res.status(401);
+                        res.sendfile("admin/front-end/auth.html");
+                        return;
+                    }
+                    res.sendfile("admin/front-end/index.html");
+                });
+            } else {
+                res.status(401);
+                res.sendfile("admin/front-end/auth.html");
+            }
         });
         app.get('/admin/randos', function (req, res) {
             var token = req.query.token;
@@ -85,8 +117,8 @@ hj
                 },
                 function () {
                     //Get status from db
-                    userModel.getEmailsAndRandosNumberArray(err, users) {
-                        async.reduce({
+ //                   userModel.getEmailsAndRandosNumberArray(err, users) {
+         //               async.reduce({
                             //total users
                             //total randos
                             //anonymous users
@@ -104,8 +136,8 @@ hj
                             //randos
 
                             //time between each rando
-                        });
-                    }
+         //               });
+//                    });
 
                 }
             ],
@@ -127,13 +159,12 @@ hj
         app.get('/admin/users', function (req, res) {
             var token = req.query.token;
 
-/*            self.forAdmin(req.token, function (err) {
+            self.forAdmin(req.token, function (err) {
                 if (err) {
                     res.status(403);
                     res.send("Forbidden");
                     return;
                 }
-                */
 
                 var page = req.query.page;
                 var count = req.query.count;
@@ -151,7 +182,7 @@ hj
 
                     res.send(usersPage);
                 });
-           // });
+            });
         });
     },
     forAdmin: function (token, callback) {
@@ -162,12 +193,20 @@ hj
             }
             callback(new Error("forAdmin method error: " + err));
         });
+    },
+    generateHashForPassword: function (email, password) {
+	var sha1sum = crypto.createHash("sha1");
+	sha1sum.update(password + email + config.app.secret);
+	return sha1sum.digest("hex");
+    },
+    createAdmin: function (email, password, callback) {
+        var self = this;
+        adminModel.create({
+            email: email,
+            password: self.generateHashForPassword(email, password),
+            authToken: crypto.randomBytes(config.app.tokenLength).toString('hex'), 
+            expiration: Date.now() + 8 * 60 * 60 * 1000
+        }, callback);
     }
 };
-
-
-
-
-
-
 
