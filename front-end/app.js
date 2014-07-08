@@ -3,6 +3,7 @@ var randoApp = angular.module("randoApp", [
     'userController',
     'randosController',
     'usersController',
+    'statusController',
     'ngTable'
 ]);
 
@@ -25,5 +26,9 @@ randoApp.config(['$routeProvider',
                 templateUrl: '/admin/partials/users.html',
                 controller: 'UsersController'
             })
-            .otherwise({redirectTo: '/'});
+            .when('/status', {
+                templateUrl: '/admin/partials/status.html',
+                controller: 'StatusController'
+            })
+            .otherwise({redirectTo: '/status'});
 }]);
