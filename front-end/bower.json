@@ -19,6 +19,8 @@
       "angular-route": "*",
       "angular-resource": "*",
       "ng-table": "*",
-      "moment": "*"
+      "moment": "*",
+	  "d3": "*",
+	  "d3pie": "*"
   }
 }

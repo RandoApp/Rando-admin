@@ -105,7 +105,7 @@ module.exports = {
                             callback(null, diskStatus);
                         });
                     },
-                    function () {
+/*                    function () {
                         //Get status from db
      //                   userModel.getEmailsAndRandosNumberArray(err, users) {
              //               async.reduce({
@@ -130,6 +130,7 @@ module.exports = {
     //                    });
 
                     }
+*/
                 ],
                 function(err, statuses) {
                     if (err) {

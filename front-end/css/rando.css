@@ -37,3 +37,8 @@ img {
     height: 100%;
     background-color: white;
 }
+.pie {
+    width: 590px;
+    height: 500px;
+    float: left;
+}
