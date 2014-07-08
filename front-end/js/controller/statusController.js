@@ -114,12 +114,12 @@ function drawMemoryPie (memory) {
             "content": [
                 {
                     "label": "Occupied",
-                    "value": Math.round((memory.total - memory.free) / 1024 / 1024 / 1024),
+                    "value": Math.round((memory.total - memory.free) / 1024 / 1024),
                     "color": "#e23a6f"
                     },
                 {
                     "label": "Free",
-                    "value": Math.round(memory.free / 1024 / 1024 / 1024),
+                    "value": Math.round(memory.free / 1024 / 1024),
                     "color": "#248838"
                     }
                 ]
