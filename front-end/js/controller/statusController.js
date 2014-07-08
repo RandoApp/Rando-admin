@@ -1,7 +1,7 @@
 var statusController = angular.module("statusController", ['ngResource']);
 
 statusController.controller("StatusController", function($scope, $http, $routeParams) {
-    $http.get('/admin/status?token=' + sessionStorage.getItem("authToken")).success(function (status) {
+    $http.get('/admin/status?token=' + localStorage.getItem("authToken")).success(function (status) {
         drawDiskSpacePie(status.disk);
         drawMemoryPie(status.memory);
     });

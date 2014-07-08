@@ -8,7 +8,7 @@ usersController.controller("UsersController", function($scope, $http, $filter, n
             total: 0,
             getData: function($defer, params) {
                 if (!$scope.cache || $scope.cache.page != params.page()) {
-                    $http.get('/admin/users?page=' + params.page() + '&count=' + params.count() + '&token=' + sessionStorage.getItem("authToken")).success(function (usersPage) {
+                    $http.get('/admin/users?page=' + params.page() + '&count=' + params.count() + '&token=' + localStorage.getItem("authToken")).success(function (usersPage) {
                         updateTable($defer, usersPage, params, $scope, $filter);
                     });
                 } else {
