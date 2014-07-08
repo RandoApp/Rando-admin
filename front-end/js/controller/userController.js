@@ -1,7 +1,7 @@
 var userController = angular.module("userController", ['ngResource']);
 
 userController.controller("UserController", function($scope, $http, $routeParams) {
-    $http.get('/admin/user?email=' + $routeParams.email + '&token=' + sessionStorage.getItem("authToken")).success(function (user) {
+    $http.get('/admin/user?email=' + $routeParams.email + '&token=' + localStorage.getItem("authToken")).success(function (user) {
         $scope.user = user;
         $scope.user.banPritty = moment.unix(user.ban).format('DD MMMM YYYY, HH:mm:ss');
         var notPairedRandos = 0;

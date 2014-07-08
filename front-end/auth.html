@@ -17,8 +17,8 @@
     <script>
       $(document).ready(function () {
         $("#auth").ajaxForm(function(responce) {
-            sessionStorage.setItem("authToken", responce.authToken);
-            window.location.replace("/admin?token=" + sessionStorage.getItem("authToken"));
+            localStorage.setItem("authToken", responce.authToken);
+            window.location.replace("/admin?token=" + localStorage.getItem("authToken"));
         }); 
       });
     </script>
