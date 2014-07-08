@@ -95,7 +95,7 @@ module.exports = {
                         callback(null, status);
                     },
                     function (callback) {
-                        diskspace.check('/', function (total, free, status) {
+                        diskspace.check('/', function (err, total, free, status) {
                             var diskStatus = {
                                 disk: {
                                     free: free,
