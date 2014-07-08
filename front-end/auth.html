@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="randoApp">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Rando-admin</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/admin/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="/admin/css/dashboard.css" rel="stylesheet">
+    <script src="/admin/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/admin/bower_components/jquery-form/jquery.form.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#auth").ajaxForm(function(responce) {
+            sessionStorage.setItem("authToken", responce.authToken);
+            window.location.replace("/admin?token=" + sessionStorage.getItem("authToken"));
+        }); 
+      });
+    </script>
+  </head>
+  <body>
+     <div class="container">
+        <form id="auth" class="form-signin" role="form" action="/admin/auth" method="POST">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <input name="email" type="email" class="form-control" placeholder="Email address" required autofocus>
+            <input name="password" type="password" class="form-control" placeholder="Password" required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+    </div>
+</body>
+</html>
