@@ -13,6 +13,7 @@
   ],
   "dependencies": {
       "jquery": "*",
+      "jquery-form": "*",
       "bootstrap": "*",
       "angular": "*",
       "angular-route": "*",
