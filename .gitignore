@@ -1,0 +1,15 @@
+node_modules
+
+#Emacs
+*~
+
+#config
+config/runtime.*
+
+#winston logging
+*.log
+
+#istanbul code coverage
+coverage
+
+front-end/bower_components
