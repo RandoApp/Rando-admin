@@ -42,3 +42,6 @@ img {
     height: 500px;
     float: left;
 }
+#log td {
+    white-space: pre;
+}

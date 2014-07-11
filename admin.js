@@ -1,4 +1,3 @@
-var adminModel = require("./model/adminModel");
 var userModel = require("../src/model/userModel");
 var randoModel = require("../src/model/randoModel");
 var express = require("express");
@@ -10,12 +9,17 @@ var diskspace = require("diskspace");
 var async = require("async");
 var crypto = require("crypto");
 var logger = require("../src/log/logger");
+var access = require("./src/service/access");
+var logService = require("./src/service/logService");
+var adminModel = require("./src/model/adminModel");
 
 module.exports = {
-
     init: function (app) {
+        logger.debug("[admin.init]");
         var self = this;
         app.use("/admin", express.static(__dirname + '/front-end'));
+
+        logService.init(app);
 
         app.post('/admin/auth', function (req, res) {
             logger.data("POST /admin/auth start");
@@ -37,17 +41,17 @@ module.exports = {
         });
         app.get('/admin', function (req, res) {
             logger.data("GET /admin ");
-            self.forAdmin(req.query.token, res, function (err, admin) {
+            access.forAdmin(req.query.token, res, function (err, admin) {
                 logger.debug("[admin.admin] Send index.html");
                 res.sendfile("admin/front-end/index.html");
             });
         });
         app.get('/admin/randos', function (req, res) {
-            self.forAdmin(req.query.token, res, function (err, admin) {
+            access.forAdmin(req.query.token, res, function (err, admin) {
                 randoModel.getAll(function (err, randos) {
                     if (err) {
-                        err.status(500);
-                        err.send(err);
+                        res.status(500);
+                        res.send(err);
                         return;
                     }
                     res.send(randos);
@@ -55,11 +59,11 @@ module.exports = {
             });
         });
         app.get('/admin/user', function (req, res) {
-            self.forAdmin(req.query.token, res, function (err, admin) {
+            access.forAdmin(req.query.token, res, function (err, admin) {
                 userModel.getByEmail(req.query.email, function (err, user) {
                     if (err) {
-                        err.status(500);
-                        err.send(err);
+                        res.status(500);
+                        res.send(err);
                         return;
                     }
                     res.send(user);
@@ -67,7 +71,7 @@ module.exports = {
             });
         });
         app.get('/admin/status', function (req, res) {
-            self.forAdmin(req.query.token, res, function (err, admin) {
+            access.forAdmin(req.query.token, res, function (err, admin) {
                 async.parallel([
                     function(callback) {
                         var nodeMemory = process.memoryUsage();
@@ -134,8 +138,8 @@ module.exports = {
                 ],
                 function(err, statuses) {
                     if (err) {
-                        err.status(500);
-                        err.send(err);
+                        res.status(500);
+                        res.send(err);
                         return;
                     }
                     var status = {};
@@ -149,14 +153,14 @@ module.exports = {
             });
         });
         app.get('/admin/users', function (req, res) {
-            self.forAdmin(req.query.token, res, function (err, admin) {
+            access.forAdmin(req.query.token, res, function (err, admin) {
                 var page = req.query.page;
                 var count = req.query.count;
 
                 userModel.getEmailsAndRandosNumberArray(function (err, emails) {
                     if (err) {
-                        err.status(500);
-                        err.send(err);
+                        res.status(500);
+                        res.send(err);
                         return;
                     }
                     var usersPage = {
@@ -167,28 +171,6 @@ module.exports = {
                     res.send(usersPage);
                 });
             });
-        });
-    },
-    forAdmin: function (token, res, callback) {
-        if (!token) {
-            logger.data("[admin.forAdmin] token not exist. Send auth.html");
-            res.status(401);
-            res.sendfile("admin/front-end/auth.html");
-            return;
-        }
-
-        adminModel.getByToken(token, function (err, admin) {
-            if (!admin || admin.expiration < Date.now() || token != admin.authToken) {
-                logger.debug("Send auth.html");
-                res.status(401);
-                res.sendfile("admin/front-end/auth.html");
-                return;
-            }
- 
-            if (admin) {
-                callback(null, admin);
-                return;
-            }
         });
     },
     generateHashForPassword: function (email, password) {

@@ -1,9 +1,11 @@
 var randoApp = angular.module("randoApp", [
     'ngRoute',
-    'userController',
     'randosController',
+    'userController',
     'usersController',
     'statusController',
+    'logController',
+    'logsController',
     'ngTable'
 ]);
 
@@ -26,9 +28,25 @@ randoApp.config(['$routeProvider',
                 templateUrl: '/admin/partials/users.html',
                 controller: 'UsersController'
             })
+            .when('/logs', {
+                templateUrl: '/admin/partials/logs.html',
+                controller: 'LogsController'
+            })
+            .when('/log/:logFile', {
+                templateUrl: '/admin/partials/log.html',
+                controller: 'LogController'
+            })
             .when('/status', {
                 templateUrl: '/admin/partials/status.html',
                 controller: 'StatusController'
             })
             .otherwise({redirectTo: '/status'});
 }]);
+
+
+$(document).ready(function() {
+    $("#menu li").on("click", function () {
+        $("#menu li").removeClass("active");
+        $(this).addClass("active");
+    });
+});
