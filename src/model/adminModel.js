@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 var config = require("config");
-var logger = require("../../src/log/logger");
+var logger = require("../../../src/log/logger");
 
 var Admin = mongoose.model("admin", new mongoose.Schema({
     email: {type: String, unique: true, lowercase: true},
