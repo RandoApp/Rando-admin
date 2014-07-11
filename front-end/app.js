@@ -42,3 +42,11 @@ randoApp.config(['$routeProvider',
             })
             .otherwise({redirectTo: '/status'});
 }]);
+
+
+$(document).ready(function() {
+    $("#menu li").on("click", function () {
+        $("#menu li").removeClass("active");
+        $(this).addClass("active");
+    });
+});

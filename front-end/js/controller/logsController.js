@@ -1,6 +1,13 @@
 var logsController = angular.module("logsController", ['ngTable', 'ngResource']);
 
-logsController.controller("LogsController", function($scope, $http, $filter, $route, ngTableParams) {
+logsController.controller("LogsController", function($scope, $http, $filter, $location, $route, ngTableParams) {
+    $scope.getClass = function(path) {
+        if ($location.path().substr(0, path.length) == path) {
+            return "active";
+        } else {
+            return "";
+        }
+    }
      $scope.tableParams = new ngTableParams({
             page: 1,
             count: 25,
