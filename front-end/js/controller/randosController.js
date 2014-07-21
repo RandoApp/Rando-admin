@@ -3,7 +3,7 @@ var randosController = angular.module("randosController", ['ngResource']);
 randosController.controller("RandosController", function($scope, $http, $routeParams) {
     $http.get('/admin/randos?token=' + localStorage.getItem("authToken")).success(function (randos) {
         for (var i = 0; i < randos.length; i++) {
-            randos[i].creationPritty = moment.unix(randos[i].creation).format('DD MMMM YYYY, HH:mm:ss');
+            randos[i].creationPritty = moment(randos[i].creation).format('DD MMMM YYYY, HH:mm:ss');
         }
         $scope.randos = randos;
         $scope.flipRando = function (rando, $event) {

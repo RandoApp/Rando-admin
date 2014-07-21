@@ -3,7 +3,7 @@ var starsController = angular.module("starsController", ['ngResource']);
 starsController.controller("StarsController", function($scope, $http, $routeParams) {
     $http.get('/admin/stars?token=' + localStorage.getItem("authToken")).success(function (stars) {
         for (var i = 0; i < stars.length; i++) {
-            stars[i].datePritty = moment.unix(stars[i].date).format('DD MMMM YYYY, HH:mm:ss');
+            stars[i].datePritty = moment(stars[i].date).format('DD MMMM YYYY, HH:mm:ss');
         }
         $scope.stars = stars;
 
