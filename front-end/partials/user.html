@@ -25,6 +25,7 @@
     <div class="rando-user">
       <div class="info">
             <h2>User</h2>
+            <a href="javascript:void(0);" data-ng-click="starOrUnstar(user.email, rando.user.randoId, $event)" class="star"></a>
             <h3 class="user"><a href="#/user/{{ rando.user.email }}">{{ rando.user.email }}</a></h3>
             <div class="datetime">{{ rando.user.creationPritty }}</div>
             <div class="randoId not-important">id: {{ rando.user.randoId }}</div>
@@ -43,6 +44,7 @@
     <div class="rando-stranger">
       <div class="info">
             <h2>Stranger</h2>
+            <a href="javascript:void(0);" data-ng-click="starOrUnstar(user.email, rando.stranger.randoId, $event)" class="star"></a>
             <h3 class="user"><a href="#/user/{{ rando.stranger.email }}">{{ rando.stranger.email }}</a></h3>
             <div class="datetime">{{ rando.stranger.creationPritty }}</div>
             <div class="randoId not-important">id: {{ rando.stranger.randoId }}</div>

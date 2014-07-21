@@ -9,7 +9,7 @@ var Admin = mongoose.model("admin", new mongoose.Schema({
     password: String,
     stars: [{
         email: String,
-        rando: String,
+        randoId: String,
         comment: String,
         date: Number
     }]

@@ -1,7 +1,9 @@
 var async = require("async");
 var logger = require("../../../src/log/logger");
 var userModel = require("../../../src/model/userModel");
+var adminModel = require("../../../src/model/userModel");
 var commentService = require("../../../src/service/commentService");
+var access = require("./access");
 
 module.exports = {
     init: function (app) {
@@ -9,6 +11,55 @@ module.exports = {
         this.initDeleteRando(app);
         this.initUnDeleteRando(app);
         this.initBanUser(app);
+        this.initStar(app);
+    },
+    initStar: function (app) {
+        var self = this;
+        app.get("/admin/stars", function (req, res) {
+            access.forAdmin(req.query.token, res, function (err, admin) {
+                if (err) {
+                    res.status(500);
+                    res.send(err);
+                    return;
+                }
+                res.send(admin.stars);
+            });
+        });
+        app.post("/admin/star", function (req, res) {
+            access.forAdmin(req.query.token, res, function (err, admin) {
+                if (err) {
+                    res.status(500);
+                    res.send(err);
+                    return;
+                }
+                admin.stars.push({
+                    email: req.body.email,
+                    randoId: req.body.randoId,
+                    comment: "",
+                    date: Date.now()
+                });
+                admin.save();
+                res.send({command: "star", result: "done"});
+            });
+        });
+        app.post("/admin/unstar", function (req, res) {
+            access.forAdmin(req.query.token, res, function (err, admin) {
+                if (err) {
+                    res.status(500);
+                    res.send(err);
+                    return;
+                }
+                for (var i = 0; i < admin.stars.length; i++) {
+                    var star = admin.stars[i];
+                    if (star.email == req.body.email && star.randoId == req.body.randoId) {
+                        admin.stars.splice(i, 1)
+                        admin.save();
+                        break;
+                    }
+                }
+                res.send({command: "unstar", result: "done"});
+            });
+        });
     },
     initBanUser: function (app) {
         var self = this;

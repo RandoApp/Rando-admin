@@ -45,3 +45,18 @@ img {
 #log td {
     white-space: pre;
 }
+
+.star-active {
+    color: gold !important;
+}
+.star {
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:200%;
+    color:#ddd;
+    text-decoration: none !important;
+}
+.star:before {
+    content:'★';
+}

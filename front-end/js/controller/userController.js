@@ -18,6 +18,41 @@ userController.controller("UserController", function($scope, $http, $routeParams
         }
         $scope.user.notPairedRandos = notPairedRandos;
 
+        //TODO: DRY . see starsController - same function.
+        $scope.starOrUnstar = function (email, randoId, $event) {
+            var action = "star";
+            if($($event.target).hasClass("star-active")) {
+                action = "unstar";
+            }
+            $http({
+                method: "POST",
+                url: "/admin/" + action + "?token=" + localStorage.getItem("authToken"),
+                data: {
+                    email: email,
+                    randoId: randoId
+                }
+                }).success(function (res) {
+                    if (action == "star") {
+                        $($event.target).addClass("star-active");
+                    } else {
+                        $($event.target).removeClass("star-active");
+                    }
+                });
+        };
+
+        $scope.star = function (email, randoId, $event) {
+            $http({
+                method: "POST",
+                url: "/admin/star?token=" + localStorage.getItem("authToken"),
+                data: {
+                    email: email,
+                    randoId: randoId
+                }
+            }).success(function (res) {
+                alert("Starred");
+            });
+        };
+
         $scope.banOrUnBanUser = function(email, $event) {
             var action = "ban";
             if ($scope.user.ban > 0) {

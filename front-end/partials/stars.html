@@ -1,0 +1,12 @@
+<h2 class="sub-header">Stars</h2>
+
+<div data-ng-repeat="star in stars">
+    <div class="rando">
+      <div class="info">
+            <h3 class="user"><a href="#/user/{{ star.email }}">{{ star.email }}</a></h3>
+            <a href="javascript:void(0);" data-ng-click="starOrUnstar(star.email, star.randoId, $event)" class="star star-active"></a>
+            <div class="datetime">{{ star.datePritty }}</div>
+        </div>
+        <img src="http://s3.amazonaws.com/img.s.rando4me/{{ star.randoId }}.jpg"/>
+    </div>
+</div>
