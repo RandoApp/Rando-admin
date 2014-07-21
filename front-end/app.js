@@ -1,6 +1,7 @@
 var randoApp = angular.module("randoApp", [
     'ngRoute',
     'randosController',
+    'starsController',
     'userController',
     'usersController',
     'statusController',
@@ -19,6 +20,10 @@ randoApp.config(['$routeProvider',
             .when('/randos', {
                 templateUrl: '/admin/partials/randos.html',
                 controller: 'RandosController'
+            })
+            .when('/stars', {
+                templateUrl: '/admin/partials/stars.html',
+                controller: 'StarsController'
             })
             .when('/user/:email', {
                 templateUrl: '/admin/partials/user.html',
