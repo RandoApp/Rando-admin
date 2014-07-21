@@ -9,17 +9,17 @@ usersController.controller("UsersController", function($scope, $http, $filter, n
             getData: function($defer, params) {
                 if (!$scope.cache || $scope.cache.page != params.page()) {
                     $http.get('/admin/users?page=' + params.page() + '&count=' + params.count() + '&token=' + localStorage.getItem("authToken")).success(function (usersPage) {
-                        updateTable($defer, usersPage, params, $scope, $filter);
+                        updateUsersTable($defer, usersPage, params, $scope, $filter);
                     });
                 } else {
-                    updateTable($defer, $scope.cache.usersPage, params, $scope, $filter);
+                    updateUsersTable($defer, $scope.cache.usersPage, params, $scope, $filter);
                 }
             }
         }
     );
 });
 
-function updateTable($defer, usersPage, params, $scope, $filter) {
+function updateUsersTable($defer, usersPage, params, $scope, $filter) {
     var page = usersPage.data;
     page = params.filter() ? $filter('filter')(page, params.filter()) : page;
     page = params.sorting() ? $filter('orderBy')(page, params.orderBy()) : page;

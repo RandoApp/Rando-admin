@@ -6,7 +6,13 @@ var Admin = mongoose.model("admin", new mongoose.Schema({
     email: {type: String, unique: true, lowercase: true},
     authToken: String,
     expiration: Number,
-    password: String
+    password: String,
+    stars: [{
+        email: String,
+        rando: String,
+        comment: String,
+        date: Number
+    }]
 }));
 
 module.exports = {

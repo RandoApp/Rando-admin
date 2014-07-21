@@ -11,6 +11,7 @@ var crypto = require("crypto");
 var logger = require("../src/log/logger");
 var access = require("./src/service/access");
 var logService = require("./src/service/logService");
+var randoService = require("./src/service/randoService");
 var adminModel = require("./src/model/adminModel");
 
 module.exports = {
@@ -20,6 +21,7 @@ module.exports = {
         app.use("/admin", express.static(__dirname + '/front-end'));
 
         logService.init(app);
+        randoService.init(app);
 
         app.post('/admin/auth', function (req, res) {
             logger.data("POST /admin/auth start");
