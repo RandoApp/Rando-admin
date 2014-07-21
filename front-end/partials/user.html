@@ -10,7 +10,12 @@
     <tr><td>facebookId</td><td>{{user.facebookId}}</td></tr>
     <tr><td>Not paired randos</td><td>{{user.notPairedRandos}}</td></tr>
     </table>
-    <button class="btn btn-default" data-ng-click="banUser(user.email);">Ban {{ user.email }}</button>
+        <div data-ng-if="!user.ban || user.ban == 0">
+            <button class="btn btn-default" data-ng-click="banOrUnBanUser(user.email, $event);">Ban {{ user.email }}</button>
+        </div>
+        <div data-ng-if="user.ban > 0">
+            <button class="btn btn-default" data-ng-click="banOrUnBanUser(user.email, $event);">Unban {{ user.email }}</button>
+        </div>
     <hr/>
 </div>
 

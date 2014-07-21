@@ -18,6 +18,38 @@ userController.controller("UserController", function($scope, $http, $routeParams
         }
         $scope.user.notPairedRandos = notPairedRandos;
 
+        $scope.banOrUnBanUser = function(email, $event) {
+            var action = "ban";
+            if ($scope.user.ban > 0) {
+                action = "unban";
+            }
+            $http({
+                method: "POST",
+                url: "/admin/" + action + "?token=" + localStorage.getItem("authToken"),
+                data: {
+                    email: email,
+                }
+            }).success(function (res) {
+                alert(action + "ned: " + email);
+                if (res.command == "ban" && res.result == "done") {
+                    $scope.user.ban = Date.now() + 99*365*24*60*60*1000;
+                }
+
+                if (res.command == "unban" && res.result == "done") {
+                    $scope.user.ban = 0;
+                }
+
+                if ($scope.user.ban > 0) {
+                    $($event.target).text("Unban " + email);
+                } else {
+                    $($event.target).text("Ban " + email);
+                }
+            }).error(function (err) {
+                alert("Can't " + action + ", because: " + err);
+            });
+
+        };
+
         $scope.deleteOrUnDeleteRando = function(email, randoId, $event) {
             var action = "delete";
             if (!canDelete($scope.user.randos, randoId)) {
