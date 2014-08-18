@@ -13,7 +13,7 @@ module.exports = {
     },
     initStar: function (app) {
         var self = this;
-        app.get("/admin/stars", function (req, res) {
+        app.get("/stars", function (req, res) {
             access.forAdmin(req.query.token, res, function (err, admin) {
                 if (err) {
                     res.status(500);
@@ -23,7 +23,7 @@ module.exports = {
                 res.send(admin.stars);
             });
         });
-        app.post("/admin/star", function (req, res) {
+        app.post("/star", function (req, res) {
             access.forAdmin(req.query.token, res, function (err, admin) {
                 if (err) {
                     res.status(500);
@@ -40,7 +40,7 @@ module.exports = {
                 res.send({command: "star", result: "done"});
             });
         });
-        app.post("/admin/unstar", function (req, res) {
+        app.post("/unstar", function (req, res) {
             access.forAdmin(req.query.token, res, function (err, admin) {
                 if (err) {
                     res.status(500);
@@ -61,8 +61,8 @@ module.exports = {
     },
     initBanUser: function (app) {
         var self = this;
-        app.post("/admin/ban", function (req, res) {
-            console.info("POST /admin/ban");
+        app.post("/ban", function (req, res) {
+            console.info("POST /ban");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 db.user.getByEmail(req.body.email, function(err, user) {
                     if (err) {
@@ -87,8 +87,8 @@ module.exports = {
                 });
             });
         });
-        app.post("/admin/unban", function (req, res) {
-            console.info("POST /admin/unban");
+        app.post("/unban", function (req, res) {
+            console.info("POST /unban");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 db.user.getByEmail(req.body.email, function(err, user) {
                     if (err) {
@@ -116,8 +116,8 @@ module.exports = {
     },
     initDeleteRando: function (app) {
         var self = this;
-        app.post("/admin/delete", function (req, res) {
-            console.info("POST /admin/delete");
+        app.post("/delete", function (req, res) {
+            console.info("POST /delete");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.deleteRando(req.body.email, req.body.rando, function (err, response) {
                     res.send(response);
@@ -127,8 +127,8 @@ module.exports = {
     },
     initUnDeleteRando: function (app) {
         var self = this;
-        app.post("/admin/undelete", function (req, res) {
-            console.info("POST /admin/undelete");
+        app.post("/undelete", function (req, res) {
+            console.info("POST /undelete");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.unDeleteRando(req.body.email, req.body.rando, function (err, response) {
                     res.send(response);

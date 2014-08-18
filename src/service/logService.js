@@ -11,8 +11,8 @@ module.exports = {
     },
     initLog: function (app) {
         var self = this;
-        app.get('/admin/log/:logFile', function (req, res) {
-            console.info("GET /admin/log/:logFile ", req.params.logFile);
+        app.get('/log/:logFile', function (req, res) {
+            console.info("GET /log/:logFile ", req.params.logFile);
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.readLogFile(req.params.logFile, function (err, log) {
                     if (err) {
@@ -28,8 +28,8 @@ module.exports = {
     },
     initDeleteLog: function (app) {
         var self = this;
-        app.delete('/admin/log/:logFile', function (req, res) {
-            console.info("DELETE /admin/log/:logFile");
+        app.delete('/log/:logFile', function (req, res) {
+            console.info("DELETE /log/:logFile");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.deleteLogFile(req.params.logFile, function (err) {
                     if (err) {
@@ -44,8 +44,8 @@ module.exports = {
     },
     initLogs: function (app) {
         var self = this;
-        app.get('/admin/logs', function (req, res) {
-            console.info("GET /admin/logs");
+        app.get('/logs', function (req, res) {
+            console.info("GET /logs");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.getLogFiles(function (err, logs) {
                     if (err) {
@@ -60,7 +60,7 @@ module.exports = {
         });
     },
     getLogFiles: function (callback) {
-        fs.readdir("logs/", function(err, files) {
+        fs.readdir(config.app.logFolder, function(err, files) {
             console.log("[logService.getLogFiles] got: ", files);
             if (!files) {
                 callback(null, []);
@@ -76,9 +76,9 @@ module.exports = {
         });
     },
     readLogFile: function (logFile, callback) {
-        fs.readFile("logs/" + logFile, callback);
+        fs.readFile(config.app.logFolder + "/" + logFile, callback);
     },
     deleteLogFile: function (logFile, callback) {
-        fs.unlink("logs/" + logFile, callback);
+        fs.unlink(config.app.logFolder + "/" + logFile, callback);
     }
 };

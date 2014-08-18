@@ -1,3 +1,5 @@
+app:
+    log: ../Rando/logs
 admin:
     url: http://rando4.me/
     port: 8889
