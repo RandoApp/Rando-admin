@@ -1,3 +1,4 @@
+var config = require("config");
 var fs = require("fs");
 var async = require("async");
 var access = require("./access");
