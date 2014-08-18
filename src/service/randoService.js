@@ -1,13 +1,11 @@
 var async = require("async");
-var logger = require("../../../src/log/logger");
-var userModel = require("../../../src/model/userModel");
-var adminModel = require("../../../src/model/userModel");
-var commentService = require("../../../src/service/commentService");
+var db = require("randoDB");
+var adminModel = require("../model/adminModel");
 var access = require("./access");
 
 module.exports = {
     init: function (app) {
-        logger.debug("[randoService.init] for admin");
+        console.log("[randoService.init] for admin");
         this.initDeleteRando(app);
         this.initUnDeleteRando(app);
         this.initBanUser(app);
@@ -64,52 +62,52 @@ module.exports = {
     initBanUser: function (app) {
         var self = this;
         app.post("/admin/ban", function (req, res) {
-            logger.data("POST /admin/ban");
+            console.info("POST /admin/ban");
             access.forAdmin(req.query.token, res, function (err, admin) {
-                userModel.getByEmail(req.body.email, function(err, user) {
+                db.user.getByEmail(req.body.email, function(err, user) {
                     if (err) {
                         res.status(500);
                         res.send(err);
                         return;
                     }
 
-                    logger.debug("[randoService.ban] got user: ", user.email);
+                    console.log("[randoService.ban] got user: ", user.email);
 
                     user.ban = Date.now() + 99 * 365 * 24 * 60 * 60 * 1000;
-                    userModel.update(user, function (err) {
+                    db.user.update(user, function (err) {
                         if (err) {
                             res.status(500);
                             res.send(err);
                             return;
                         }
 
-                        logger.debug("[randoService.ban] user: ", user.email, " banned");
+                        console.log("[randoService.ban] user: ", user.email, " banned");
                         res.send({command: "ban", result: "done"});
                     });
                 });
             });
         });
         app.post("/admin/unban", function (req, res) {
-            logger.data("POST /admin/unban");
+            console.info("POST /admin/unban");
             access.forAdmin(req.query.token, res, function (err, admin) {
-                userModel.getByEmail(req.body.email, function(err, user) {
+                db.user.getByEmail(req.body.email, function(err, user) {
                     if (err) {
                         res.status(500);
                         res.send(err);
                         return;
                     }
 
-                    logger.debug("[randoService.ban] got user: ", user.email);
+                    console.log("[randoService.ban] got user: ", user.email);
 
                     user.ban = 0;
-                    userModel.update(user, function (err) {
+                    db.user.update(user, function (err) {
                         if (err) {
                             res.status(500);
                             res.send(err);
                             return;
                         }
 
-                        logger.debug("[randoService.ban] user: ", user.email, " unbanned");
+                        console.log("[randoService.ban] user: ", user.email, " unbanned");
                         res.send({command: "unban", result: "done"});
                     });
                 });
@@ -119,7 +117,7 @@ module.exports = {
     initDeleteRando: function (app) {
         var self = this;
         app.post("/admin/delete", function (req, res) {
-            logger.data("POST /admin/delete");
+            console.info("POST /admin/delete");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.deleteRando(req.body.email, req.body.rando, function (err, response) {
                     res.send(response);
@@ -130,7 +128,7 @@ module.exports = {
     initUnDeleteRando: function (app) {
         var self = this;
         app.post("/admin/undelete", function (req, res) {
-            logger.data("POST /admin/undelete");
+            console.info("POST /admin/undelete");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.unDeleteRando(req.body.email, req.body.rando, function (err, response) {
                     res.send(response);
@@ -139,15 +137,57 @@ module.exports = {
         });
     },
     deleteRando: function (email, randoId, callback) {
-        logger.data("[randoService.deleteRando]");
-        userModel.getByEmail(email, function (err, user) {
-            commentService.delete(user, randoId, callback);
+        console.info("[randoService.deleteRando]");
+        db.user.getByEmail(email, function (err, user) {
+            async.detect(user.randos, function (rando, done) {
+                done(rando.user.randoId == randoId || rando.stranger.randoId == randoId);
+            }, function (rando) {
+                if (!rando) {
+                    callback("Rando not found");
+                    return;
+                }
+
+                if (rando.stranger.randoId == randoId) {
+                    rando.stranger.delete = 1;
+                } else {
+                    rando.user.delete = 1;
+                }
+
+                db.user.update(user, function (err) {
+                    if (err) {
+                        callback(Errors.System());
+                        return;
+                    }
+                    callback(null, {command: "delete", result: "done"});
+                });
+            });
         });
     },
     unDeleteRando: function (email, randoId, callback) {
-        logger.data("[randoService.unDeleteRando]");
-        userModel.getByEmail(email, function (err, user) {
-            commentService.unDelete(user, randoId, callback);
+        console.info("[randoService.unDeleteRando]");
+        db.user.getByEmail(email, function (err, user) {
+            async.detect(user.randos, function (rando, done) {
+                done(rando.user.randoId == randoId || rando.stranger.randoId == randoId);
+            }, function (rando) {
+                if (!rando) {
+                    callback("Rando not found");
+                    return;
+                }
+
+                if (rando.stranger.randoId == randoId) {
+                    rando.stranger.delete = 0;
+                } else {
+                    rando.user.delete = 0;
+                }
+
+                db.user.update(user, function (err) {
+                    if (err) {
+                        callback(Errors.System());
+                        return;
+                    }
+                    callback(null, {command: "undelete", result: "done"});
+                });
+            });
         });
     }
 };

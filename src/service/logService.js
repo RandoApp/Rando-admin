@@ -1,11 +1,10 @@
 var fs = require("fs");
 var async = require("async");
 var access = require("./access");
-var logger = require("../../../src/log/logger");
 
 module.exports = {
     init: function (app) {
-        logger.debug("[logService.init] for admin");
+        console.log("[logService.init] for admin");
         this.initLogs(app);
         this.initLog(app);
         this.initDeleteLog(app);
@@ -13,7 +12,7 @@ module.exports = {
     initLog: function (app) {
         var self = this;
         app.get('/admin/log/:logFile', function (req, res) {
-            logger.data("GET /admin/log/:logFile ", req.params.logFile);
+            console.info("GET /admin/log/:logFile ", req.params.logFile);
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.readLogFile(req.params.logFile, function (err, log) {
                     if (err) {
@@ -30,7 +29,7 @@ module.exports = {
     initDeleteLog: function (app) {
         var self = this;
         app.delete('/admin/log/:logFile', function (req, res) {
-            logger.data("DELETE /admin/log/:logFile");
+            console.info("DELETE /admin/log/:logFile");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.deleteLogFile(req.params.logFile, function (err) {
                     if (err) {
@@ -46,7 +45,7 @@ module.exports = {
     initLogs: function (app) {
         var self = this;
         app.get('/admin/logs', function (req, res) {
-            logger.data("GET /admin/logs");
+            console.info("GET /admin/logs");
             access.forAdmin(req.query.token, res, function (err, admin) {
                 self.getLogFiles(function (err, logs) {
                     if (err) {
@@ -62,7 +61,7 @@ module.exports = {
     },
     getLogFiles: function (callback) {
         fs.readdir("logs/", function(err, files) {
-            logger.debug("[logService.getLogFiles] got: ", files);
+            console.log("[logService.getLogFiles] got: ", files);
             if (!files) {
                 callback(null, []);
                 return;
