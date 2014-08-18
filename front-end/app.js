@@ -14,35 +14,35 @@ randoApp.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider
             .when('/auth', {
-                templateUrl: '/admin/partials/auth.html',
+                templateUrl: '/static/partials/auth.html',
                 controller: 'AuthController'
             })
             .when('/randos', {
-                templateUrl: '/admin/partials/randos.html',
+                templateUrl: '/static/partials/randos.html',
                 controller: 'RandosController'
             })
             .when('/stars', {
-                templateUrl: '/admin/partials/stars.html',
+                templateUrl: '/static/partials/stars.html',
                 controller: 'StarsController'
             })
             .when('/user/:email', {
-                templateUrl: '/admin/partials/user.html',
+                templateUrl: '/static/partials/user.html',
                 controller: 'UserController'
             })
             .when('/users', {
-                templateUrl: '/admin/partials/users.html',
+                templateUrl: '/static/partials/users.html',
                 controller: 'UsersController'
             })
             .when('/logs', {
-                templateUrl: '/admin/partials/logs.html',
+                templateUrl: '/static/partials/logs.html',
                 controller: 'LogsController'
             })
             .when('/log/:logFile', {
-                templateUrl: '/admin/partials/log.html',
+                templateUrl: '/static/partials/log.html',
                 controller: 'LogController'
             })
             .when('/status', {
-                templateUrl: '/admin/partials/status.html',
+                templateUrl: '/static/partials/status.html',
                 controller: 'StatusController'
             })
             .otherwise({redirectTo: '/status'});

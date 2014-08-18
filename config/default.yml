@@ -1,0 +1,37 @@
+app:
+    logFolder: ../Rando/logs
+admin:
+    url: http://rando4.me/
+    port: 8889
+    cacheControl: 31557600000
+    secret: STUB
+    anonymousEmailPosftix: rando4.me
+    reportedImageStub: http://s3.amazonaws.com/img.s.rando4me/reported.jpg
+    tokenLength: 21
+    limit:
+        time: 300000 #5 mins
+        images: 50 #50 images per 5 mins
+        ban: 10800000 #3 hours
+        imageSize: 30mb
+    img:
+        quality: 85 
+        ext: jpg
+        folder:
+            origin: origin/
+            small: small/
+            medium: medium/
+            large: large/
+        size:
+            small: 480
+            medium: 800
+            large: 1200
+db:
+    url: mongodb://localhost/rando
+s3:
+    key: AccessKeyIdSTUB
+    secret: SecretAccessKeySTUB
+    bucket:
+        img:
+            small: img.s.rando4me
+            medium: img.m.rando4me
+            large: img.l.rando4me

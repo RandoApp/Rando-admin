@@ -1,7 +1,7 @@
 var starsController = angular.module("starsController", ['ngResource']);
 
 starsController.controller("StarsController", function($scope, $http, $routeParams) {
-    $http.get('/admin/stars?token=' + localStorage.getItem("authToken")).success(function (stars) {
+    $http.get('/stars?token=' + localStorage.getItem("authToken")).success(function (stars) {
         for (var i = 0; i < stars.length; i++) {
             stars[i].datePritty = moment(stars[i].date).format('DD MMMM YYYY, HH:mm:ss');
         }
@@ -14,7 +14,7 @@ starsController.controller("StarsController", function($scope, $http, $routePara
             }
             $http({
                 method: "POST",
-                url: "/admin/" + action + "?token=" + localStorage.getItem("authToken"),
+                url: "/" + action + "?token=" + localStorage.getItem("authToken"),
                 data: {
                     email: email,
                     randoId: randoId

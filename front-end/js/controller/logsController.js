@@ -14,10 +14,10 @@ logsController.controller("LogsController", function($scope, $http, $filter, $lo
         }, {
             total: 0,
             getData: function($defer, params) {
-                $http.get('/admin/logs?token=' + localStorage.getItem("authToken")).success(function (logs) {
+                $http.get('/logs?token=' + localStorage.getItem("authToken")).success(function (logs) {
                     updateTable($defer, logs, params, $scope, $filter);
                     $scope.deleteLogFile = function (logFile) {
-                        $http.delete('/admin/log/' + logFile + '?token=' + localStorage.getItem("authToken"))
+                        $http.delete('/log/' + logFile + '?token=' + localStorage.getItem("authToken"))
                         .success(function(data, status, headers, config) {
                             alert("File " + data.delete + " deleted");
                             $route.reload();

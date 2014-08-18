@@ -1,7 +1,7 @@
 var userController = angular.module("userController", ['ngResource']);
 
 userController.controller("UserController", function($scope, $http, $routeParams, $route) {
-    $http.get('/admin/user?email=' + $routeParams.email + '&token=' + localStorage.getItem("authToken")).success(function (user) {
+    $http.get('/user?email=' + $routeParams.email + '&token=' + localStorage.getItem("authToken")).success(function (user) {
         $scope.user = user;
         $scope.user.banPritty = moment(user.ban).format('DD MMMM YYYY, HH:mm:ss');
         var notPairedRandos = 0;
@@ -26,7 +26,7 @@ userController.controller("UserController", function($scope, $http, $routeParams
             }
             $http({
                 method: "POST",
-                url: "/admin/" + action + "?token=" + localStorage.getItem("authToken"),
+                url: "/" + action + "?token=" + localStorage.getItem("authToken"),
                 data: {
                     email: email,
                     randoId: randoId
@@ -43,7 +43,7 @@ userController.controller("UserController", function($scope, $http, $routeParams
         $scope.star = function (email, randoId, $event) {
             $http({
                 method: "POST",
-                url: "/admin/star?token=" + localStorage.getItem("authToken"),
+                url: "/star?token=" + localStorage.getItem("authToken"),
                 data: {
                     email: email,
                     randoId: randoId
@@ -60,7 +60,7 @@ userController.controller("UserController", function($scope, $http, $routeParams
             }
             $http({
                 method: "POST",
-                url: "/admin/" + action + "?token=" + localStorage.getItem("authToken"),
+                url: "/" + action + "?token=" + localStorage.getItem("authToken"),
                 data: {
                     email: email,
                 }
@@ -93,7 +93,7 @@ userController.controller("UserController", function($scope, $http, $routeParams
 
             $http({
                 method: "POST",
-                url: "/admin/" + action + "?token=" + localStorage.getItem("authToken"),
+                url: "/" + action + "?token=" + localStorage.getItem("authToken"),
                 data: {
                     email: $routeParams.email,
                     rando: randoId
