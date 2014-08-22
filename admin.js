@@ -179,8 +179,8 @@ app.get('/users', function (req, res) {
     });
 });
 
-app.listen(config.admin.port, function () {
-    console.info('Express server listening on port ' + config.admin.port);
+app.listen(config.admin.port, config.admin.host, function () {
+    console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
 });
 
 function generateHashForPassword (email, password) {

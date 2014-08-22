@@ -2,6 +2,7 @@ app:
     logFolder: ../Rando/logs
 admin:
     url: http://rando4.me/
+    host: 127.0.0.1
     port: 8889
     cacheControl: 31557600000
     secret: STUB
