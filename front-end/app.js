@@ -7,6 +7,7 @@ var randoApp = angular.module("randoApp", [
     'statusController',
     'logController',
     'logsController',
+    'apiController',
     'ngTable'
 ]);
 
@@ -36,6 +37,10 @@ randoApp.config(['$routeProvider',
             .when('/logs', {
                 templateUrl: '/static/partials/logs.html',
                 controller: 'LogsController'
+            })
+            .when('/api', {
+                templateUrl: '/static/partials/api.html',
+                controller: 'ApiController'
             })
             .when('/log/:logFile', {
                 templateUrl: '/static/partials/log.html',
