@@ -1,5 +1,6 @@
 var db = require("randoDB");
 var express = require("express");
+var bodyParser = require("body-parser");
 var fs = require("fs");
 var config = require("config");
 var os = require("os");
@@ -13,11 +14,11 @@ var randoService = require("./src/service/randoService");
 var adminModel = require("./src/model/adminModel");
 var express = require("express");
 var app = express();
-
-db.connect(config.db.url);
+var mongoose = require("mongoose");
+var db = mongoose.connect(config.db.url).connection;
 
 app.use("/static/", express.static(__dirname + '/front-end'));
-app.use(express.bodyParser());
+app.use(bodyParser());
 
 logService.init(app);
 randoService.init(app);
@@ -28,6 +29,7 @@ app.post('/auth', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     var passwordHash = generateHashForPassword(email, password);
+    console.log("Search user");
     adminModel.getByEmail(email, function (err, admin) {
         if (err || !admin || admin.password != passwordHash) {
             res.status(403);
@@ -35,19 +37,20 @@ app.post('/auth', function (req, res) {
             return;
         }
 
+        console.log("User found");
         admin.expiration = Date.now() + 8 * 60 * 60 * 1000;
         admin.authToken = crypto.randomBytes(config.admin.tokenLength).toString('hex');
-        db.user.update(admin);
+        console.log("User updated with generatedAuthToken");
+        adminModel.update(admin);
         res.send({authToken: admin.authToken});
     });
 });
-app.get('/', function (req, res) {
+
+app.get('/', access.forAdmin, function (req, res) {
     console.info("GET /");
-    access.forAdmin(req.query.token, res, function (err, admin) {
-        console.log("[admin.admin] Send index.html");
-        res.sendfile("front-end/index.html");
-    });
+    res.sendfile("front-end/index.html");
 });
+
 app.get('/randos', function (req, res) {
     console.info("GET /randos");
     access.forAdmin(req.query.token, res, function (err, admin) {

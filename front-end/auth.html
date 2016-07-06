@@ -18,7 +18,7 @@
       $(document).ready(function () {
         $("#auth").ajaxForm(function(responce) {
             localStorage.setItem("authToken", responce.authToken);
-            window.location.replace("/?token=" + localStorage.getItem("authToken"));
+            window.location.replace("/");
         }); 
       });
     </script>

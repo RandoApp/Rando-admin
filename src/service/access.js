@@ -1,7 +1,8 @@
 var adminModel = require("../model/adminModel");
 
 module.exports = {
-    forAdmin: function (token, res, callback) {
+    forAdmin: function (req, res, next) {
+        var token = req.header.token;
         if (!token) {
             console.info("[admin.forAdmin] token not exist. Send auth.html");
             res.status(401);
@@ -18,8 +19,7 @@ module.exports = {
             }
  
             if (admin) {
-                callback(null, admin);
-                return;
+                next();
             }
         });
     }
