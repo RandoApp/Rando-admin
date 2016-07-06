@@ -61,7 +61,7 @@ module.exports = {
         });
     },
     getLogFiles: function (callback) {
-        fs.readdir(config.app.logFolder, function(err, files) {
+        fs.readdir(config.app.randoAppLogFolder, function(err, files) {
             console.log("[logService.getLogFiles] got: ", files);
             if (!files) {
                 callback(null, []);
@@ -77,9 +77,9 @@ module.exports = {
         });
     },
     readLogFile: function (logFile, callback) {
-        fs.readFile(config.app.logFolder + "/" + logFile, callback);
+        fs.readFile(config.app.randoAppLogFolder + "/" + logFile, callback);
     },
     deleteLogFile: function (logFile, callback) {
-        fs.unlink(config.app.logFolder + "/" + logFile, callback);
+        fs.unlink(config.app.randoAppLogFolder + "/" + logFile, callback);
     }
 };

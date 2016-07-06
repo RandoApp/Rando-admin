@@ -1,5 +1,12 @@
 app:
-    logFolder: ../Rando/logs
+    randoAppLogFolder: ../Rando/logs
+    log:
+        folder: logs
+        file: rando.log
+        handleException: true
+        level:
+            console: debug
+            file: info
 admin:
     url: http://rando4.me/
     host: 127.0.0.1
