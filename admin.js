@@ -40,7 +40,7 @@ app.post('/auth', function (req, res) {
         console.log("User found");
         admin.expiration = Date.now() + 8 * 60 * 60 * 1000;
         admin.authToken = crypto.randomBytes(config.admin.tokenLength).toString('hex');
-        console.log("User updated with generatedAuthToken");
+        console.log("User updated with generatedAuthToken",admin.authToken);
         adminModel.update(admin);
         res.send({authToken: admin.authToken});
     });

@@ -9,7 +9,7 @@ angular.module('randoApp').factory('authInterceptor', [
   function($rootScope, ENV, $log, CONFIG) {
     return {
       request: function($config) {
-        $config.headers['token'] = localStorage.getItem("authToken");
+        $config.headers['Authorization'] = localStorage.getItem("authToken");
       }
     };
   }
