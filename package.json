@@ -24,14 +24,18 @@
     "gm": "1.22.0",
     "s3": "4.4.0",
     "diskspace": "1.0.3",
+    "basic-auth": "1.0.4",
     "randoDB": "git+https://github.com/RandoApp/Rando-db.git"
   },
   "devDependencies": {
     "mocha": "2.5.3",
     "should": "9.0.2",
-    "sinon": "1.17.4"
+    "sinon": "1.17.4",
+    "istanbul": "0.4.4",
+    "coveralls": "2.11.9"
   },
   "scripts": {
-    "test": "node_modules/mocha/bin/_mocha -- --recursive"
+    "test": "node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- --recursive",
+    "coveralls": "node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --recursive && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   }
 }
