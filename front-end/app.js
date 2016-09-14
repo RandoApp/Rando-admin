@@ -3,7 +3,6 @@ var randoApp = angular.module("randoApp", [
     'randosController',
     'starsController',
     'userController',
-    'usersController',
     'statusController',
     'logController',
     'logsController',
@@ -30,9 +29,9 @@ randoApp.config(['$routeProvider',
                 templateUrl: '/static/partials/user.html',
                 controller: 'UserController'
             })
-            .when('/users', {
-                templateUrl: '/static/partials/users.html',
-                controller: 'UsersController'
+            .when('/reports', {
+                templateUrl: '/static/partials/reports.html',
+                                controller: 'LogsController'
             })
             .when('/logs', {
                 templateUrl: '/static/partials/logs.html',

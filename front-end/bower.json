@@ -12,15 +12,14 @@
     "tests"
   ],
   "dependencies": {
-      "jquery": "*",
-      "jquery-form": "*",
-      "bootstrap": "*",
-      "angular": "*",
-      "angular-route": "*",
-      "angular-resource": "*",
-      "ng-table": "*",
-      "moment": "*",
-	  "d3": "*",
-	  "d3pie": "*"
+    "jquery": "2.1.1",
+    "bootstrap": "3.2.0",
+    "angular": "1.2.22",
+    "angular-route": "1.2.22",
+    "angular-resource": "1.2.22",
+    "ng-table": "0.3.2",
+    "moment": "2.8.1",
+    "d3": "*",
+    "d3pie": "0.1.3"
   }
 }

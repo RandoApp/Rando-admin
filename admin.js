@@ -15,7 +15,8 @@ var adminModel = require("./src/model/adminModel");
 var express = require("express");
 var app = express();
 var mongoose = require("mongoose");
-var db = mongoose.connect(config.db.url).connection;
+
+require("randoDB").connect(config.db.url);
 
 app.use("/static/", express.static(__dirname + '/front-end'));
 app.use(bodyParser());
@@ -23,100 +24,72 @@ app.use(bodyParser());
 logService.init(app);
 randoService.init(app);
 
-app.post('/auth', function (req, res) {
-    console.info("POST /auth start");
-    console.log(JSON.stringify(req.body));
-    var email = req.body.email;
-    var password = req.body.password;
-    var passwordHash = generateHashForPassword(email, password);
-    console.log("Search user");
-    adminModel.getByEmail(email, function (err, admin) {
-        if (err || !admin || admin.password != passwordHash) {
-            res.status(403);
-            res.send("Forbidden");
-            return;
-        }
-
-        console.log("User found");
-        admin.expiration = Date.now() + 8 * 60 * 60 * 1000;
-        admin.authToken = crypto.randomBytes(config.admin.tokenLength).toString('hex');
-        console.log("User updated with generatedAuthToken",admin.authToken);
-        adminModel.update(admin);
-        res.send({authToken: admin.authToken});
-    });
-});
-
 app.get('/', access.forAdmin, function (req, res) {
     console.info("GET /");
     res.sendfile("front-end/index.html");
 });
 
-app.get('/randos', function (req, res) {
+app.get('/randos', access.forAdmin, function (req, res) {
     console.info("GET /randos");
-    access.forAdmin(req.query.token, res, function (err, admin) {
-        db.rando.getAll(function (err, randos) {
-            if (err) {
-                res.status(500);
-                res.send(err);
-                return;
-            }
-            res.send(randos);
-        });
+    db.rando.getAll(function (err, randos) {
+        if (err) {
+            res.status(500);
+            res.send(err);
+            return;
+        }
+        res.send(randos);
     });
 });
-app.get('/user', function (req, res) {
+app.get('/user', access.forAdmin, function (req, res) {
     console.info("GET /user");
-    access.forAdmin(req.query.token, res, function (err, admin) {
-        db.user.getByEmail(req.query.email, function (err, user) {
-            if (err) {
-                res.status(500);
-                res.send(err);
-                return;
-            }
-            res.send(user);
-        });
+    db.user.getByEmail(req.query.email, function (err, user) {
+        if (err) {
+            res.status(500);
+            res.send(err);
+            return;
+        }
+        res.send(user);
     });
 });
-app.get('/status', function (req, res) {
+app.get('/status', access.forAdmin, function (req, res) {
     console.info("GET /status");
-    access.forAdmin(req.query.token, res, function (err, admin) {
-        async.parallel([
-            function(callback) {
-                var nodeMemory = process.memoryUsage();
-                var status = {
-                    ip: [],
-                    memory: {
-                        total: os.totalmem(),
-                        free: os.freemem(),
-                        heap: nodeMemory.heapTotal,
-                        heapUsed: nodeMemory.heapUsed,
-                        swap: nodeMemory.rss
-                    },
-                    cpu: {
-                        loadAvg: os.loadavg(),
-                        uptime: os.uptime(),
-                        nodeUptime: process.uptime()
+    async.parallel([
+        function(callback) {
+            var nodeMemory = process.memoryUsage();
+            var status = {
+                ip: [],
+                memory: {
+                    total: os.totalmem(),
+                    free: os.freemem(),
+                    heap: nodeMemory.heapTotal,
+                    heapUsed: nodeMemory.heapUsed,
+                    swap: nodeMemory.rss
+                },
+                cpu: {
+                    loadAvg: os.loadavg(),
+                    uptime: os.uptime(),
+                    nodeUptime: process.uptime()
+                }
+            };
+            var networkInterfaces = os.networkInterfaces().eth0;
+            if (networkInterfaces) {
+                for (var i = 0; i < networkInterfaces.length; i++) {
+                    status.ip.push(networkInterfaces[i].address);
+                }
+            }
+            callback(null, status);
+        },
+        function (callback) {
+            diskspace.check('/', function (err, total, free, status) {
+                var diskStatus = {
+                    disk: {
+                        free: free,
+                        total: total
                     }
                 };
-                var networkInterfaces = os.networkInterfaces().eth0;
-                if (networkInterfaces) {
-                    for (var i = 0; i < networkInterfaces.length; i++) {
-                        status.ip.push(networkInterfaces[i].address);
-                    }
-                }
-                callback(null, status);
-            },
-            function (callback) {
-                diskspace.check('/', function (err, total, free, status) {
-                    var diskStatus = {
-                        disk: {
-                            free: free,
-                            total: total
-                        }
-                    };
-                    callback(null, diskStatus);
-                });
-            },
+                callback(null, diskStatus);
+            });
+        },
 /*                    function () {
                 //Get status from db
 //                   db.user.getEmailsAndRandosNumberArray(err, users) {
@@ -142,43 +115,40 @@ app.get('/status', function (req, res) {
 //                    });
 
             }
-*/
-        ],
-        function(err, statuses) {
-            if (err) {
-                res.status(500);
-                res.send(err);
-                return;
-            }
-            var status = {};
-            for (var i = 0; i < statuses.length; i++) {
-                for (var attr in statuses[i]) {
-                    status[attr] = statuses[i][attr];
+            */
+            ],
+            function(err, statuses) {
+                if (err) {
+                    res.status(500);
+                    res.send(err);
+                    return;
                 }
-            }
-            res.send(status);
-        });
-    });
+                var status = {};
+                for (var i = 0; i < statuses.length; i++) {
+                    for (var attr in statuses[i]) {
+                        status[attr] = statuses[i][attr];
+                    }
+                }
+                res.send(status);
+            });
 });
-app.get('/users', function (req, res) {
+app.get('/users', access.forAdmin, function (req, res) {
     console.info("GET /users");
-    access.forAdmin(req.query.token, res, function (err, admin) {
-        var page = req.query.page;
-        var count = req.query.count;
+    var page = req.query.page;
+    var count = req.query.count;
 
-        db.user.getEmailsAndRandosNumberArray(function (err, emails) {
-            if (err) {
-                res.status(500);
-                res.send(err);
-                return;
-            }
-            var usersPage = {
-                data: emails.slice((page - 1) * count, page * count),
-                total: emails.length
-            };
+    db.user.getEmailsAndRandosNumberArray(function (err, emails) {
+        if (err) {
+            res.status(500);
+            res.send(err);
+            return;
+        }
+        var usersPage = {
+            data: emails.slice((page - 1) * count, page * count),
+            total: emails.length
+        };
 
-            res.send(usersPage);
-        });
+        res.send(usersPage);
     });
 });
 

@@ -2,3 +2,10 @@
 
 <div id="diskSpacePie" class="pie"></div>
 <div id="memoryPie" class="pie"></div>
+<iframe id="monitor" src="/monitor" style="overflow:hidden;height:1000px;" height="1000px"></iframe>
+
+<script type="text/javascript">
+	var monitor = $("#monitor");
+	monitor.attr("src",window.location.protocol + "//" + window.location.hostname +"/monitor");
+	monitor.css("width", $(".main").width());
+</script>

@@ -11,6 +11,7 @@ module.exports = {
                 res.sendfile("front-end/auth.html");
                 return;
             }*/
+            console.log("req:" + req + "res: " + res);
             var user = basicAuth(req);
             if (basicAuth) {
                 next();
