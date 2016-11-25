@@ -11,10 +11,7 @@
   },
   "dependencies": {
     "command-line-args": "3.0.0",
-    "mongodb": "2.1.18",
-    "mongoose": "4.5.2",
     "express": "4.14.0",
-    "serve-static": "1.11.1",
     "body-parser": "1.15.2",
     "js-yaml": "3.6.1",
     "config": "1.21.0",
@@ -25,7 +22,7 @@
     "s3": "4.4.0",
     "diskspace": "1.0.3",
     "basic-auth": "1.0.4",
-    "randoDB": "git+https://github.com/RandoApp/Rando-db.git"
+    "randoDB": "RandoApp/Rando-db"
   },
   "devDependencies": {
     "mocha": "2.5.3",

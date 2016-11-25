@@ -1,6 +1,5 @@
 var db = require("randoDB");
 var express = require("express");
-var bodyParser = require("body-parser");
 var fs = require("fs");
 var config = require("config");
 var os = require("os");
@@ -16,80 +15,74 @@ var express = require("express");
 var app = express();
 var mongoose = require("mongoose");
 
-require("randoDB").connect(config.db.url);
-
-app.use("/static/", express.static(__dirname + '/front-end'));
-app.use(bodyParser());
+db.connect(config.db.url);
 
 logService.init(app);
 randoService.init(app);
 
-app.get('/', access.forAdmin, function (req, res) {
-    console.info("GET /");
-    res.sendfile("front-end/index.html");
+app.get('/randos', access.forAdmin, function (req, res) {
+  console.info("GET /randos");
+  db.rando.getAll(function (err, randos) {
+    if (err) {
+      res.status(500);
+      res.send(err);
+      return;
+    }
+    res.send(randos);
+  });
 });
 
-app.get('/randos', access.forAdmin, function (req, res) {
-    console.info("GET /randos");
-    db.rando.getAll(function (err, randos) {
-        if (err) {
-            res.status(500);
-            res.send(err);
-            return;
-        }
-        res.send(randos);
-    });
-});
 app.get('/user', access.forAdmin, function (req, res) {
-    console.info("GET /user");
-    db.user.getByEmail(req.query.email, function (err, user) {
-        if (err) {
-            res.status(500);
-            res.send(err);
-            return;
-        }
-        res.send(user);
-    });
+  console.info("GET /user");
+  db.user.getByEmail(req.query.email, function (err, user) {
+    if (err) {
+      res.status(500);
+      res.send(err);
+      return;
+    }
+    res.send(user);
+  });
 });
+
 app.get('/status', access.forAdmin, function (req, res) {
-    console.info("GET /status");
-    async.parallel([
-        function(callback) {
-            var nodeMemory = process.memoryUsage();
-            var status = {
-                ip: [],
-                memory: {
-                    total: os.totalmem(),
-                    free: os.freemem(),
-                    heap: nodeMemory.heapTotal,
-                    heapUsed: nodeMemory.heapUsed,
-                    swap: nodeMemory.rss
-                },
-                cpu: {
-                    loadAvg: os.loadavg(),
-                    uptime: os.uptime(),
-                    nodeUptime: process.uptime()
-                }
-            };
-            var networkInterfaces = os.networkInterfaces().eth0;
-            if (networkInterfaces) {
-                for (var i = 0; i < networkInterfaces.length; i++) {
-                    status.ip.push(networkInterfaces[i].address);
-                }
-            }
-            callback(null, status);
+  console.info("GET /status");
+  async.parallel([
+    function(callback) {
+      var nodeMemory = process.memoryUsage();
+      var status = {
+        ip: [],
+        memory: {
+          total: os.totalmem(),
+          free: os.freemem(),
+          heap: nodeMemory.heapTotal,
+          heapUsed: nodeMemory.heapUsed,
+          swap: nodeMemory.rss
         },
-        function (callback) {
-            diskspace.check('/', function (err, total, free, status) {
-                var diskStatus = {
-                    disk: {
-                        free: free,
-                        total: total
-                    }
-                };
-                callback(null, diskStatus);
-            });
-        },
+        cpu: {
+          loadAvg: os.loadavg(),
+          uptime: os.uptime(),
+          nodeUptime: process.uptime()
+        }
+      };
+      var networkInterfaces = os.networkInterfaces().eth0;
+      if (networkInterfaces) {
+        for (var i = 0; i < networkInterfaces.length; i++) {
+          status.ip.push(networkInterfaces[i].address);
+        }
+      }
+      callback(null, status);
+    },
+    function (callback) {
+      diskspace.check('/', function (err, total, free, status) {
+        var diskStatus = {
+          disk: {
+            free: free,
+            total: total
+          }
+        };
+        callback(null, diskStatus);
+      });
+    },
 /*                    function () {
                 //Get status from db
 //                   db.user.getEmailsAndRandosNumberArray(err, users) {
@@ -118,59 +111,59 @@ app.get('/status', access.forAdmin, function (req, res) {
             */
             ],
             function(err, statuses) {
-                if (err) {
-                    res.status(500);
-                    res.send(err);
-                    return;
+              if (err) {
+                res.status(500);
+                res.send(err);
+                return;
+              }
+              var status = {};
+              for (var i = 0; i < statuses.length; i++) {
+                for (var attr in statuses[i]) {
+                  status[attr] = statuses[i][attr];
                 }
-                var status = {};
-                for (var i = 0; i < statuses.length; i++) {
-                    for (var attr in statuses[i]) {
-                        status[attr] = statuses[i][attr];
-                    }
-                }
-                res.send(status);
+              }
+              res.send(status);
             });
 });
 app.get('/users', access.forAdmin, function (req, res) {
-    console.info("GET /users");
-    var page = req.query.page;
-    var count = req.query.count;
+  console.info("GET /users");
+  var page = req.query.page;
+  var count = req.query.count;
 
-    db.user.getEmailsAndRandosNumberArray(function (err, emails) {
-        if (err) {
-            res.status(500);
-            res.send(err);
-            return;
-        }
-        var usersPage = {
-            data: emails.slice((page - 1) * count, page * count),
-            total: emails.length
-        };
+  db.user.getEmailsAndRandosNumberArray(function (err, emails) {
+    if (err) {
+      res.status(500);
+      res.send(err);
+      return;
+    }
+    var usersPage = {
+      data: emails.slice((page - 1) * count, page * count),
+      total: emails.length
+    };
 
-        res.send(usersPage);
-    });
+    res.send(usersPage);
+  });
 });
 
 app.listen(config.admin.port, config.admin.host, function () {
-    console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
+  console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
 });
 
 function generateHashForPassword (email, password) {
-    var sha1sum = crypto.createHash("sha1");
-    sha1sum.update(password + email + config.admin.secret);
-    return sha1sum.digest("hex");
+  var sha1sum = crypto.createHash("sha1");
+  sha1sum.update(password + email + config.admin.secret);
+  return sha1sum.digest("hex");
 };
 
 module.exports = {
-    createAdmin: function (email, password, callback) {
-        var self = this;
-        adminModel.create({
-            email: email,
-            password: generateHashForPassword(email, password),
-            authToken: crypto.randomBytes(config.admin.tokenLength).toString('hex'), 
-            expiration: Date.now() + 8 * 60 * 60 * 1000
-        }, callback);
-    }
+  createAdmin: function (email, password, callback) {
+    var self = this;
+    adminModel.create({
+      email: email,
+      password: generateHashForPassword(email, password),
+      authToken: crypto.randomBytes(config.admin.tokenLength).toString('hex'), 
+      expiration: Date.now() + 8 * 60 * 60 * 1000
+    }, callback);
+  }
 };
 

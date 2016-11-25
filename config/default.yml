@@ -1,4 +1,6 @@
 app:
+    creds:
+        admin: admin 
     randoAppLogFolder: ../Rando/logs
     log:
         folder: logs
