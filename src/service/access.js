@@ -1,26 +1,25 @@
+var basicAuth = require("basic-auth");
 var adminModel = require("../model/adminModel");
+var logger = require("../log/logger");
+var config = require("config");
+
+function sendAccessDenied (res) {
+  res.statusCode = 401;
+  res.setHeader('WWW-Authenticate', 'Basic realm="example"');
+  res.end('Access denied');
+}
 
 module.exports = {
-    forAdmin: function (req, res, next) {
-        var token = req.header.token;
-        if (!token) {
-            console.info("[admin.forAdmin] token not exist. Send auth.html");
-            res.status(401);
-            res.sendfile("front-end/auth.html");
-            return;
-        }
+  forAdmin: function (req, res, next) {
+    var credentials = basicAuth(req);
 
-        adminModel.getByToken(token, function (err, admin) {
-            if (!admin || admin.expiration < Date.now() || token != admin.authToken) {
-                console.log("Send auth.html");
-                res.status(401);
-                res.sendfile("front-end/auth.html");
-                return;
-            }
- 
-            if (admin) {
-                next();
-            }
-        });
+    if (credentials && credentials.name && config.app.creds[credentials.name] === credentials.pass) {
+      req.user = credentials.name;
+      logger.info("Following admin user got access", req.user);
+      next();
+    } else  {
+      logger.warn("AccessDenied for:", credentials);
+      sendAccessDenied(res);
     }
+  }
 };
