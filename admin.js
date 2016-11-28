@@ -145,6 +145,27 @@ app.get('/users', access.forAdmin, function (req, res) {
   });
 });
 
+app.get('/calendar', access.forAdmin, function (req, res) {
+  console.info("GET /calendar");
+  var start = req.query.start;
+  var end = req.query.end;
+
+  db.user.getLightOutRandosForPeriod(start, end, function (err, randos) {
+    if (err || !randos || !randos[0] || !randos[0].out) {
+      res.status(500);
+      return res.send(err);
+    }
+    var allRandos = [];
+    for (var i = 0; i < randos.length; i++) {
+      if (randos[i] && randos[i].out) {
+        allRandos = allRandos.concat(randos[i].out);
+      }
+    }
+    res.send(allRandos);
+    console.info("GET /calendar DONE");
+  });
+});
+
 app.listen(config.admin.port, config.admin.host, function () {
   console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
 });
