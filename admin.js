@@ -125,6 +125,7 @@ app.get('/status', access.forAdmin, function (req, res) {
               res.send(status);
             });
 });
+
 app.get('/users', access.forAdmin, function (req, res) {
   console.info("GET /users");
   var page = req.query.page;
@@ -151,18 +152,11 @@ app.get('/calendar', access.forAdmin, function (req, res) {
   var end = req.query.end;
 
   db.user.getLightOutRandosForPeriod(start, end, function (err, randos) {
-    if (err || !randos || !randos[0] || !randos[0].out) {
+    if (err) {
       res.status(500);
       return res.send(err);
     }
-    var allRandos = [];
-    for (var i = 0; i < randos.length; i++) {
-      if (randos[i] && randos[i].out) {
-        allRandos = allRandos.concat(randos[i].out);
-      }
-    }
-    res.send(allRandos);
-    console.info("GET /calendar DONE");
+    res.send(randos);
   });
 });
 
