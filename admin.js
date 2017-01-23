@@ -160,6 +160,18 @@ app.get('/calendar', access.forAdmin, function (req, res) {
   });
 });
 
+app.get('/anomalies', access.forAdmin, function (req, res) {
+  console.info("GET /anomalies");
+
+  db.anomaly.getAll(function (err, anomalies) {
+    if (err) {
+      res.status(500);
+      return res.send(err);
+    }
+    res.send(anomalies);
+  });
+});
+
 app.listen(config.admin.port, config.admin.host, function () {
   console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
 });
