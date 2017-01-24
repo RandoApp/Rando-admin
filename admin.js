@@ -83,47 +83,22 @@ app.get('/status', access.forAdmin, function (req, res) {
         callback(null, diskStatus);
       });
     },
-/*                    function () {
-                //Get status from db
-//                   db.user.getEmailsAndRandosNumberArray(err, users) {
-     //               async.reduce({
-                        //total users
-                        //total randos
-                        //anonymous users
-                        //users with 0 randos
-                        //users with 0-5 randos
-                        //users with 5-10 randos
-                        //users with 10-30 randos
-                        //users with 30-100 randos
-                        //users with > 100 randos
 
-                        //users by last usage
-
-                        //reported/deleted randos
-                        //banned users
-                        //randos
-
-                        //time between each rando
-     //               });
-//                    });
-
-            }
-            */
-            ],
-            function(err, statuses) {
-              if (err) {
-                res.status(500);
-                res.send(err);
-                return;
-              }
-              var status = {};
-              for (var i = 0; i < statuses.length; i++) {
-                for (var attr in statuses[i]) {
-                  status[attr] = statuses[i][attr];
-                }
-              }
-              res.send(status);
-            });
+    ],
+    function(err, statuses) {
+      if (err) {
+        res.status(500);
+        res.send(err);
+        return;
+      }
+      var status = {};
+      for (var i = 0; i < statuses.length; i++) {
+        for (var attr in statuses[i]) {
+          status[attr] = statuses[i][attr];
+        }
+      }
+      res.send(status);
+    });
 });
 
 app.get('/users', access.forAdmin, function (req, res) {
@@ -169,6 +144,63 @@ app.get('/anomalies', access.forAdmin, function (req, res) {
       return res.send(err);
     }
     res.send(anomalies);
+  });
+});
+
+app.post('/anomaly-move/:randoId', access.forAdmin, function (req, res) {
+  console.info("POST /anomaly-move/" + req.params.randoId);
+
+  db.anomaly.getByRandoId(req.params.randoId, function (err, anomaly) {
+    if (err) {
+      res.status(500);
+      return res.send(err);
+    }
+
+    var rando = anomaly.rando;
+    if (Array.isArray(rando.tags)) {
+      rando.tags = rando.tags.filter( (tag) => { return !/(monocolor)|(nude)/g.test(tag) } );
+    }
+
+    db.rando.add(rando, function (errAdd) {
+      if (errAdd) {
+        res.status(500);
+        return res.send(errAdd);
+      }
+
+      db.anomaly.removeByRandoId(req.params.randoId, function (errRemove) {
+        if (errRemove) {
+          res.status(500);
+          return res.send(errRemove);
+        }
+      
+        db.anomaly.getAll(function (err, anomalies) {
+          if (err) {
+            res.status(500);
+            return res.send(err);
+          }
+          res.send(anomalies);
+        });  
+      });
+    });
+  });
+});
+
+app.post('/anomaly-delete/:randoId', access.forAdmin, function (req, res) {
+  console.info("DELETE /anomaly/" + req.params.randoId);
+
+  db.anomaly.removeByRandoId(req.params.randoId, function (err) {
+    if (err) {
+      res.status(500);
+      return res.send(err);
+    }
+
+    db.anomaly.getAll(function (err, anomalies) {
+      if (err) {
+        res.status(500);
+        return res.send(err);
+      }
+      res.send(anomalies);
+    });
   });
 });
 
