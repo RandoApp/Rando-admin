@@ -204,6 +204,19 @@ app.post('/anomaly-delete/:randoId', access.forAdmin, function (req, res) {
   });
 });
 
+app.get('/exchangelogs', access.forAdmin, function (req, res) {
+  console.info("GET /exchangelogs");
+
+  db.exchangeLog.getLastNLightLogs(req.query.limit, function (err, logs) {
+    if (err) {
+      res.status(500);
+      return res.send(err);
+    }
+    res.send(logs);
+  });
+});
+
+
 app.listen(config.admin.port, config.admin.host, function () {
   console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
 });
