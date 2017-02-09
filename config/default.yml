@@ -16,8 +16,10 @@ admin:
     cacheControl: 31557600000
     secret: STUB
     anonymousEmailPosftix: rando4.me
+    serverTimeout: 900000 #15min
     reportedImageStub: http://s3.amazonaws.com/img.s.rando4me/reported.jpg
     tokenLength: 21
+    scriptsFolder: src/scripts
     limit:
         time: 300000 #5 mins
         images: 50 #50 images per 5 mins
