@@ -216,10 +216,27 @@ app.get('/exchangelogs', access.forAdmin, function (req, res) {
   });
 });
 
+app.get('/scripts', access.forAdmin, function (req, res) {
+  console.info("GET /scripts");
+  res.send(fs.readdirSync(config.admin.scriptsFolder).map(script => script.replace(".js", "")));
+});
+
+app.post('/scripts/:script', access.forAdmin, function (req, res) {
+  console.info("POST /scripts/", req.params.script);
+  require("./" + config.admin.scriptsFolder + "/" + req.params.script).run(function (err, result) {
+    if (err) {
+      console.log("ERR: " + err);
+      res.status(500);
+      return res.send(err);
+    }
+    console.log("RESULT IS : " + result);
+    res.send(result);
+  });
+});
 
 app.listen(config.admin.port, config.admin.host, function () {
   console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
-});
+}).setTimeout(config.admin.serverTimeout);
 
 function generateHashForPassword (email, password) {
   var sha1sum = crypto.createHash("sha1");
