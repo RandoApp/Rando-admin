@@ -20,6 +20,7 @@ admin:
     reportedImageStub: http://s3.amazonaws.com/img.s.rando4me/reported.jpg
     tokenLength: 21
     scriptsFolder: src/scripts
+    permanentBanTo: 9000000000000 #ban to 2255 year
     limit:
         time: 300000 #5 mins
         images: 50 #50 images per 5 mins

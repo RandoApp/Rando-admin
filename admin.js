@@ -204,6 +204,32 @@ app.post('/anomaly-delete/:randoId', access.forAdmin, function (req, res) {
   });
 });
 
+app.post('/ban/:email', access.forAdmin, function (req, res) {
+  var email = req.params.email;
+  var meta = {ban: config.admin.permanentBanTo};
+  db.user.updateUserMetaByEmail(email, meta, (err) => {
+    if (err) {
+      res.send(err);
+    } else {
+      meta.result = email + " successfully BANNED to " + new Date(meta.ban);
+      res.send(meta);
+    }
+  });
+});
+
+app.post('/unban/:email', access.forAdmin, function (req, res) {
+  var email = req.params.email;
+  var meta = {ban: 0};
+  db.user.updateUserMetaByEmail(email, meta, (err) => {
+    if (err) {
+      res.send(err);
+    } else {
+      meta.result = email + " successfully UN_BANNED. ban field set to " + new Date(meta.ban);
+      res.send(meta);
+    }
+  });
+});
+
 app.get('/exchangelogs', access.forAdmin, function (req, res) {
   console.info("GET /exchangelogs");
 
