@@ -204,7 +204,7 @@ app.post('/anomaly-delete/:randoId', access.forAdmin, function (req, res) {
   });
 });
 
-app.post('/ban/:email', access.forAdmin, function (req, res) {
+app.post("/ban/:email", access.forAdmin, function (req, res) {
   var email = req.params.email;
   var meta = {ban: config.admin.permanentBanTo};
   db.user.updateUserMetaByEmail(email, meta, (err) => {
@@ -217,7 +217,7 @@ app.post('/ban/:email', access.forAdmin, function (req, res) {
   });
 });
 
-app.post('/unban/:email', access.forAdmin, function (req, res) {
+app.post("/unban/:email", access.forAdmin, function (req, res) {
   var email = req.params.email;
   var meta = {ban: 0};
   db.user.updateUserMetaByEmail(email, meta, (err) => {
