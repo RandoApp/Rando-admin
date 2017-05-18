@@ -135,6 +135,22 @@ app.get('/calendar', access.forAdmin, function (req, res) {
   });
 });
 
+app.get('/bans', access.forAdmin, function (req, res) {
+  console.info("GET /bans");
+  var banStart = req.query.banStart ? parseInt(req.query.banStart) : Date.now();
+  var banEnd = req.query.banEnd ? parseInt(req.query.banEnd) : config.app.permanentBanTo;
+  var offset =  req.query.offset ? parseInt(req.query.offset) : 0;
+  var limit =  req.query.limit ? parseInt(req.query.limit) : 100;
+  db.user.getBannedUsers(banStart, banEnd, offset, limit, function (err, bans) {
+    if (err) {
+      res.status(500);
+      res.send(err);
+      return;
+    }
+    res.send(bans);
+  });
+});
+
 app.get('/anomalies', access.forAdmin, function (req, res) {
   console.info("GET /anomalies");
 
