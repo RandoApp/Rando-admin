@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Admin console for rando server",
   "engine": {
-    "node": ">=0.8.8"
+    "node": ">=8.1.2"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
     "s3": "4.4.0",
     "diskspace": "1.0.3",
     "basic-auth": "1.0.4",
-    "randoDB": "RandoApp/Rando-db"
+    "@rando4.me/db": "0.1.2"
   },
   "devDependencies": {
     "mocha": "2.5.3",

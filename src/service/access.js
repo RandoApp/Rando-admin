@@ -1,5 +1,4 @@
 var basicAuth = require("basic-auth");
-var adminModel = require("../model/adminModel");
 var logger = require("../log/logger");
 var config = require("config");
 

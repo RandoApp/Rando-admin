@@ -1,9 +1,7 @@
 var db = require("randoDB");
-var express = require("express");
 var fs = require("fs");
 var config = require("config");
 var os = require("os");
-var util = require("util");
 var diskspace = require("diskspace");
 var async = require("async");
 var crypto = require("crypto");
@@ -13,7 +11,6 @@ var randoService = require("./src/service/randoService");
 var adminModel = require("./src/model/adminModel");
 var express = require("express");
 var app = express();
-var mongoose = require("mongoose");
 
 db.connect(config.db.url);
 

@@ -9,6 +9,10 @@ app:
         level:
             console: debug
             file: info
+        allowedLabels:
+          - TV
+          - Nude
+          - Normal
 admin:
     url: http://rando4.me/
     host: 127.0.0.1
@@ -48,3 +52,4 @@ s3:
             small: img.s.rando4me
             medium: img.m.rando4me
             large: img.l.rando4me
+

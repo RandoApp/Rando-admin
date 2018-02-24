@@ -13,3 +13,6 @@ config/runtime.*
 coverage
 
 front-end/bower_components
+
+
+.idea
