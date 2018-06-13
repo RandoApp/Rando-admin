@@ -1,4 +1,4 @@
-var db = require("randoDB");
+var db = require("@rando4.me/db");
 var fs = require("fs");
 var config = require("config");
 var os = require("os");
@@ -185,14 +185,14 @@ app.post('/anomaly-move/:randoId', access.forAdmin, function (req, res) {
           res.status(500);
           return res.send(errRemove);
         }
-      
+
         db.anomaly.getAll(function (err, anomalies) {
           if (err) {
             res.status(500);
             return res.send(err);
           }
           res.send(anomalies);
-        });  
+        });
       });
     });
   });
@@ -273,6 +273,79 @@ app.post('/scripts/:script', access.forAdmin, function (req, res) {
   });
 });
 
+app.get('/labels', access.forAdmin, (req, res) => {
+  console.info("GET /labels" + req.query);
+  if (req.query.supported) {
+    res.send(config.admin.labels);
+  } else {
+    var offset = req.query.offset;
+    var limit = req.query.limit;
+    db.label.getAllLight(offset, limit, (err, labels) => {
+      if (err) {
+        console.log("ERR: " + err);
+        res.status(500);
+        return res.send(err);
+      } else {
+        res.send(labels);
+      }
+    });
+  }
+});
+
+app.get('/label/:randoId', access.forAdmin, (req, res) => {
+  console.info("GET /label/" + req.params.randoId);
+
+  db.label.getByRandoId(req.params.randoId, (err, label) => {
+    if (err) {
+      console.log("ERR: " + err);
+      res.status(500);
+      return res.send(err);
+    }
+    if (label && label.labels) {
+      res.send(label.labels);
+    } else {
+      res.send([]);
+    }
+  });
+});
+
+app.post('/label/:randoId', access.forAdmin, (req, res) => {
+  console.info("POST /label/", req.params.randoId);
+
+  db.user.getLightRandoByRandoId(req.params.randoId, (err, rando) => {
+    if (err || !rando) {
+      console.log("ERR: " + err);
+      res.status(500);
+      return res.send(err);
+    }
+
+    var label = {
+        email: rando.email,
+        randoId: req.params.randoId,
+        randoUrl: rando.imageURL,
+        labels: [req.query.label],
+        creation: Date.now()
+    }
+
+    db.label.save(label, (err) => {
+      if (err) {
+        console.log("ERR: " + err);
+        res.status(500);
+        return res.send(err);
+      } else {
+        db.label.getByRandoId(req.params.randoId, (err, label) => {
+          if (err) {
+            console.log("ERR: " + err);
+            res.status(500);
+            return res.send(err);
+          }
+          res.send(label);
+        });
+      }
+    });
+  });
+});
+
 app.listen(config.admin.port, config.admin.host, function () {
   console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
 }).setTimeout(config.admin.serverTimeout);
@@ -289,9 +362,8 @@ module.exports = {
     adminModel.create({
       email: email,
       password: generateHashForPassword(email, password),
-      authToken: crypto.randomBytes(config.admin.tokenLength).toString('hex'), 
+      authToken: crypto.randomBytes(config.admin.tokenLength).toString('hex'),
       expiration: Date.now() + 8 * 60 * 60 * 1000
     }, callback);
   }
 };
-
