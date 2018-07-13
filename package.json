@@ -22,8 +22,7 @@
     "s3": "4.4.0",
     "diskspace": "1.0.3",
     "basic-auth": "1.0.4",
-    "@rando4.me/db": "0.1.5",
-    "mongoose": "5.0.12"
+    "@rando4.me/db": "0.1.5"
   },
   "devDependencies": {
     "mocha": "2.5.3",

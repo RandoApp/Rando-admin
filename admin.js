@@ -8,7 +8,6 @@ var crypto = require("crypto");
 var access = require("./src/service/access");
 var logService = require("./src/service/logService");
 var randoService = require("./src/service/randoService");
-var adminModel = require("./src/model/adminModel");
 var express = require("express");
 var app = express();
 
@@ -349,21 +348,3 @@ app.post('/label/:randoId', access.forAdmin, (req, res) => {
 app.listen(config.admin.port, config.admin.host, function () {
   console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
 }).setTimeout(config.admin.serverTimeout);
-
-function generateHashForPassword (email, password) {
-  var sha1sum = crypto.createHash("sha1");
-  sha1sum.update(password + email + config.admin.secret);
-  return sha1sum.digest("hex");
-};
-
-module.exports = {
-  createAdmin: function (email, password, callback) {
-    var self = this;
-    adminModel.create({
-      email: email,
-      password: generateHashForPassword(email, password),
-      authToken: crypto.randomBytes(config.admin.tokenLength).toString('hex'),
-      expiration: Date.now() + 8 * 60 * 60 * 1000
-    }, callback);
-  }
-};
