@@ -16,7 +16,7 @@ db.connect(config.db.url);
 logService.init(app);
 randoService.init(app);
 
-app.get('/randos', access.forAdmin, function (req, res) {
+app.get("/randos", access.forAdmin, function (req, res) {
   console.info("GET /randos");
   db.rando.getAll(function (err, randos) {
     if (err) {
@@ -28,7 +28,7 @@ app.get('/randos', access.forAdmin, function (req, res) {
   });
 });
 
-app.get('/user', access.forAdmin, function (req, res) {
+app.get("/user", access.forAdmin, function (req, res) {
   console.info("GET /user");
   db.user.getByEmail(req.query.email, function (err, user) {
     if (err) {
@@ -40,7 +40,7 @@ app.get('/user', access.forAdmin, function (req, res) {
   });
 });
 
-app.get('/status', access.forAdmin, function (req, res) {
+app.get("/status", access.forAdmin, function (req, res) {
   console.info("GET /status");
   async.parallel([
     function(callback) {
@@ -69,7 +69,7 @@ app.get('/status', access.forAdmin, function (req, res) {
       callback(null, status);
     },
     function (callback) {
-      diskspace.check('/', function (err, total, free, status) {
+      diskspace.check("/", function (err, total, free, status) {
         var diskStatus = {
           disk: {
             free: free,
@@ -97,7 +97,7 @@ app.get('/status', access.forAdmin, function (req, res) {
     });
 });
 
-app.get('/users', access.forAdmin, function (req, res) {
+app.get("/users", access.forAdmin, function (req, res) {
   console.info("GET /users");
   var page = req.query.page;
   var count = req.query.count;
@@ -117,7 +117,7 @@ app.get('/users', access.forAdmin, function (req, res) {
   });
 });
 
-app.get('/calendar', access.forAdmin, function (req, res) {
+app.get("/calendar", access.forAdmin, function (req, res) {
   console.info("GET /calendar");
   var start = req.query.start;
   var end = req.query.end;
@@ -131,7 +131,7 @@ app.get('/calendar', access.forAdmin, function (req, res) {
   });
 });
 
-app.get('/bans', access.forAdmin, function (req, res) {
+app.get("/bans", access.forAdmin, function (req, res) {
   console.info("GET /bans");
   var banStart = req.query.banStart ? parseInt(req.query.banStart) : Date.now();
   var banEnd = req.query.banEnd ? parseInt(req.query.banEnd) : config.app.permanentBanTo;
@@ -147,7 +147,7 @@ app.get('/bans', access.forAdmin, function (req, res) {
   });
 });
 
-app.get('/anomalies', access.forAdmin, function (req, res) {
+app.get("/anomalies", access.forAdmin, function (req, res) {
   console.info("GET /anomalies");
 
   db.anomaly.getAll(function (err, anomalies) {
@@ -159,7 +159,7 @@ app.get('/anomalies', access.forAdmin, function (req, res) {
   });
 });
 
-app.post('/anomaly-move/:randoId', access.forAdmin, function (req, res) {
+app.post("/anomaly-move/:randoId", access.forAdmin, function (req, res) {
   console.info("POST /anomaly-move/" + req.params.randoId);
 
   db.anomaly.getByRandoId(req.params.randoId, function (err, anomaly) {
@@ -197,7 +197,7 @@ app.post('/anomaly-move/:randoId', access.forAdmin, function (req, res) {
   });
 });
 
-app.post('/anomaly-delete/:randoId', access.forAdmin, function (req, res) {
+app.post("/anomaly-delete/:randoId", access.forAdmin, function (req, res) {
   console.info("DELETE /anomaly/" + req.params.randoId);
 
   db.anomaly.removeByRandoId(req.params.randoId, function (err) {
@@ -242,7 +242,7 @@ app.post("/unban/:email", access.forAdmin, function (req, res) {
   });
 });
 
-app.get('/exchangelogs', access.forAdmin, function (req, res) {
+app.get("/exchangelogs", access.forAdmin, function (req, res) {
   console.info("GET /exchangelogs");
 
   db.exchangeLog.getLastNLightLogs(req.query.limit, function (err, logs) {
@@ -254,12 +254,12 @@ app.get('/exchangelogs', access.forAdmin, function (req, res) {
   });
 });
 
-app.get('/scripts', access.forAdmin, function (req, res) {
+app.get("/scripts", access.forAdmin, function (req, res) {
   console.info("GET /scripts");
   res.send(fs.readdirSync(config.admin.scriptsFolder).map(script => script.replace(".js", "")));
 });
 
-app.post('/scripts/:script', access.forAdmin, function (req, res) {
+app.post("/scripts/:script", access.forAdmin, function (req, res) {
   console.info("POST /scripts/", req.params.script);
   require("./" + config.admin.scriptsFolder + "/" + req.params.script).run(function (err, result) {
     if (err) {
@@ -272,7 +272,7 @@ app.post('/scripts/:script', access.forAdmin, function (req, res) {
   });
 });
 
-app.get('/labels', access.forAdmin, (req, res) => {
+app.get("/labels", access.forAdmin, (req, res) => {
   console.info("GET /labels" + req.query);
   if (req.query.supported) {
     res.send(config.admin.labels);
@@ -291,7 +291,7 @@ app.get('/labels', access.forAdmin, (req, res) => {
   }
 });
 
-app.get('/label/:randoId', access.forAdmin, (req, res) => {
+app.get("/label/:randoId", access.forAdmin, (req, res) => {
   console.info("GET /label/" + req.params.randoId);
 
   db.label.getByRandoId(req.params.randoId, (err, label) => {
@@ -308,7 +308,7 @@ app.get('/label/:randoId', access.forAdmin, (req, res) => {
   });
 });
 
-app.post('/label/:randoId', access.forAdmin, (req, res) => {
+app.post("/label/:randoId", access.forAdmin, (req, res) => {
   console.info("POST /label/", req.params.randoId);
 
   db.user.getLightRandoByRandoId(req.params.randoId, (err, rando) => {
@@ -324,7 +324,7 @@ app.post('/label/:randoId', access.forAdmin, (req, res) => {
         randoUrl: rando.imageURL,
         labels: [req.query.label],
         creation: Date.now()
-    }
+    };
 
     db.label.save(label, (err) => {
       if (err) {
@@ -346,5 +346,5 @@ app.post('/label/:randoId', access.forAdmin, (req, res) => {
 });
 
 app.listen(config.admin.port, config.admin.host, function () {
-  console.info('Express server listening on port ' + config.admin.port + ' and host: ' + config.admin.host);
+  console.info("Express server listening on port " + config.admin.port + " and host: " + config.admin.host);
 }).setTimeout(config.admin.serverTimeout);
