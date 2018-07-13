@@ -1,6 +1,6 @@
 app:
     creds:
-        admin: admin 
+        admin: admin
     randoAppLogFolder: ../Rando/logs
     log:
         folder: logs
@@ -9,6 +9,10 @@ app:
         level:
             console: debug
             file: info
+        allowedLabels:
+          - TV
+          - Nude
+          - Normal
 admin:
     url: http://rando4.me/
     host: 127.0.0.1
@@ -27,7 +31,7 @@ admin:
         ban: 10800000 #3 hours
         imageSize: 30mb
     img:
-        quality: 85 
+        quality: 85
         ext: jpg
         folder:
             origin: origin/
@@ -38,6 +42,10 @@ admin:
             small: 480
             medium: 800
             large: 1200
+    labels:
+      - TV
+      - Nude
+      - Normal
 db:
     url: mongodb://localhost/rando
 s3:

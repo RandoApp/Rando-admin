@@ -1,6 +1,5 @@
 var async = require("async");
-var db = require("randoDB");
-var adminModel = require("../model/adminModel");
+var db = require("@rando4.me/db");
 var access = require("./access");
 
 module.exports = {

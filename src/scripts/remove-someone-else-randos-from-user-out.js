@@ -1,5 +1,5 @@
 var async = require("async");
-var db = require("randoDB");
+var db = require("@rando4.me/db");
 
 module.exports = {
   run (callback) {
